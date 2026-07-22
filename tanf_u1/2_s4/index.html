@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title id="page-title">量盾安全软件 · 轻量本地安全中心</title>
+    <link rel="icon" id="page-favicon" href="/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a5f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        ::selection { background: #3b82f6; color: #fff; }
+
+        /* Hero 背景动画 */
+        .hero-section {
+            background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, rgba(59,130,246,0.02) 40%, transparent 70%);
+            pointer-events: none;
+            animation: heroPulse 6s ease-in-out infinite;
+        }
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(147,197,253,0.1) 0%, transparent 70%);
+            pointer-events: none;
+            animation: heroPulse 8s ease-in-out infinite reverse;
+        }
+        @keyframes heroPulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.7; transform: translateX(-50%) scale(1.05); }
+        }
+
+        /* 网格装饰 */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* 淡入动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .fade-in-delay-1 { animation-delay: 0.1s; }
+        .fade-in-delay-2 { animation-delay: 0.2s; }
+        .fade-in-delay-3 { animation-delay: 0.3s; }
+        .fade-in-delay-4 { animation-delay: 0.4s; }
+        .fade-in-delay-5 { animation-delay: 0.5s; }
+        .fade-in-delay-6 { animation-delay: 0.6s; }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Logo 光环 */
+        .logo-glow {
+            position: relative;
+        }
+        .logo-glow::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(147,197,253,0.1));
+            filter: blur(12px);
+            z-index: -1;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+        @keyframes logoGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* 按钮样式 */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: #fff;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .btn-primary:hover::before { opacity: 1; }
+        .btn-primary:hover {
+            box-shadow: 0 8px 30px rgba(59,130,246,0.35);
+            transform: translateY(-2px);
+        }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary span, .btn-primary i { position: relative; z-index: 1; }
+
+        .btn-secondary {
+            background: #fff;
+            color: #1e3a5f;
+            border: 1.5px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-secondary:hover {
+            border-color: #3b82f6;
+            color: #2563eb;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.1);
+            transform: translateY(-2px);
+        }
+        .btn-secondary:active { transform: translateY(0); }
+
+        .btn-browser {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: #fff;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-browser::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .btn-browser:hover::before { opacity: 1; }
+        .btn-browser:hover {
+            box-shadow: 0 8px 30px rgba(5,150,105,0.35);
+            transform: translateY(-2px);
+        }
+        .btn-browser:active { transform: translateY(0); }
+        .btn-browser span, .btn-browser i { position: relative; z-index: 1; }
+
+        .btn-community {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+            color: #fff;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-community:hover {
+            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 20px rgba(30, 58, 95, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-community:active { transform: translateY(0); }
+
+        /* 卡片样式 */
+        .feature-card {
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .feature-card:hover {
+            box-shadow: 0 12px 40px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+            transform: translateY(-4px);
+        }
+
+        /* 宣传图容器 */
+        .promo-frame {
+            position: relative;
+        }
+        .promo-frame::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(147,197,253,0.05), rgba(59,130,246,0.1));
+            z-index: -1;
+        }
+
+        .promo-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 420px;
+            object-fit: cover;
+            object-position: center top;
+        }
+        @media (min-width: 640px) {
+            .promo-img {
+                max-height: 520px;
+                object-position: center center;
+            }
+        }
+
+        /* 轮播图样式 */
+        .carousel-img {
+            transition: opacity 0.6s ease-in-out;
+        }
+        .carousel-dot.active {
+            background: #fff !important;
+            transform: scale(1.2);
+        }
+
+        .detail-row {
+            transition: all 0.2s ease;
+        }
+        .detail-row:hover {
+            background: #f8fafc;
+        }
+
+        /* 分隔线渐变 */
+        .divider-gradient {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
+        }
+
+        /* Section 交替底色 */
+        .section-alt {
+            background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%);
+        }
+
+        /* 底部CTA */
+        .cta-box {
+            background: linear-gradient(135deg, #f0f5ff 0%, #f8faff 50%, #f0fdf4 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .cta-box::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(5,150,105,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* 触摸友好 */
+        .btn-primary, .btn-secondary, .btn-browser, .btn-community, a, button {
+            touch-action: manipulation;
+        }
+
+        /* 图标容器渐变 */
+        .icon-box {
+            position: relative;
+        }
+        .icon-box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(59,130,246,0.08), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .feature-card:hover .icon-box::after {
+            opacity: 1;
+        }
+
+        /* 滚动触发动画 */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 徽章 */
+        .badge-new {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #fff;
+            animation: badgePulse 2s ease-in-out infinite;
+        }
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(5,150,105,0.3); }
+            50% { box-shadow: 0 0 0 4px rgba(5,150,105,0); }
+        }
+
+        /* 下载下拉菜单 */
+        .dropdown-menu {
+            animation: dropdownIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: top center;
+        }
+        @keyframes dropdownIn {
+            from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .dropdown-toggle {
+            transition: background 0.2s ease;
+        }
+        .dropdown-toggle:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .dropdown-toggle:active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* 网盘链接特殊样式 —— 柔和紫色系，与品牌蓝区分又不突兀 */
+        .btn-netdisk {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: #fff;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-netdisk:hover {
+            background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
+            transform: translateY(-1px);
+        }
+        .btn-netdisk:active { transform: translateY(0); }
+
+        /* 后台入口按钮 */
+        .admin-entry {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+        .admin-entry:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+    </style>
+<base target="_blank">
+</head>
+<body class="bg-white font-sans text-slate-800">
+
+    <!-- 顶部导航 -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-xl border-b border-slate-100/80">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 sm:gap-3 group">
+                <img id="nav-logo" src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾安全软件" class="w-8 h-8 rounded-lg flex-shrink-0 object-contain">
+                <span id="nav-title" class="text-base font-semibold text-slate-900 tracking-tight">量盾安全软件</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-6 lg:gap-8">
+                <a href="#features" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">产品介绍</a>
+                <a href="#details" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">功能详情</a>
+                <a href="#support" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">支持</a>
+                <a href="#download" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">下载</a>
+                <!-- 新增：工具站导航链接 -->
+                <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">工具站</a>
+                <!-- 新增：样本分享网盘（桌面端导航） -->
+                <a href="https://pan.liangdun.top/" target="_blank" rel="noopener" class="text-sm text-slate-500 hover:text-brand-600 transition-colors flex items-center gap-1">
+                    <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                    样本网盘
+                </a>
+                <a href="https://liangdun.wemebabo57.workers.dev/" target="_blank" rel="noopener" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">国际站</a>
+                <a href="https://www.liangdun.top" target="_blank" rel="noopener" class="btn-community inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium">
+                    <i data-lucide="radio" class="w-4 h-4"></i>
+                    威胁情报社区
+                </a>
+            </nav>
+            <div class="flex items-center gap-1.5 md:hidden">
+                <!-- 移动端：情报社区按钮 -->
+                <a href="https://www.liangdun.top" target="_blank" rel="noopener" class="btn-community inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap">
+                    <i data-lucide="radio" class="w-3.5 h-3.5"></i>
+                    情报社区
+                </a>
+                <!-- 移动端新增：工具站按钮 -->
+                <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap border-slate-200">
+                    <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
+                    工具站
+                </a>
+                <!-- 移动端新增：样本分享网盘（精简文字避免拥挤） -->
+                <a href="https://pan.liangdun.top/" target="_blank" rel="noopener" class="btn-netdisk inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap">
+                    <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                    网盘
+                </a>
+                <!-- 移动端新增：国际站按钮 -->
+                <a href="https://liangdun.wemebabo57.workers.dev/" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap border-slate-200">
+                    <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                    国际站
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-16">
+
+        <!-- Hero 区域 -->
+        <section class="hero-section grid-bg relative">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-16 pb-8 sm:pt-28 sm:pb-12 relative z-10">
+                <div class="text-center fade-in">
+                    <div class="flex items-center justify-center gap-3 mb-6">
+                        <div class="logo-glow inline-block">
+                            <img id="hero-logo" src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾安全软件" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl shadow-lg shadow-brand-500/20 object-contain relative z-10">
+                        </div>
+                    </div>
+                    <h1 id="hero-title" class="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-tight mb-4">
+                        量盾安全软件
+                    </h1>
+                    <p class="text-lg sm:text-xl text-slate-400 font-light max-w-xl mx-auto leading-relaxed px-2">
+                        本地运行、轻量高效的安全防护工具
+                    </p>
+                </div>
+
+                <!-- 宣传图 -->
+                <div class="mt-10 sm:mt-12 mb-2 fade-in fade-in-delay-1">
+                    <div class="promo-frame relative rounded-2xl overflow-hidden border border-slate-200/80 shadow-2xl shadow-slate-200/60">
+                        <div id="promo-carousel" class="relative">
+                            <img id="promo-img-1" src="https://pan.tenire.com/down.php/b89012f7ee86b1ea1e18df2762302201.png" alt="量盾安全中心界面截图 1" class="promo-img carousel-img active" data-index="0">
+                            <img id="promo-img-2" src="https://pan.tenire.com/down.php/4a279ccb50210dab5f82e141f783d9f2.png" alt="量盾安全中心界面截图 2" class="promo-img carousel-img" data-index="1" style="opacity: 0; position: absolute; top: 0; left: 0;">
+                        </div>
+                        <!-- 指示器 -->
+                        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+                            <button class="carousel-dot w-2 h-2 rounded-full bg-white/60 hover:bg-white transition-colors active" data-index="0"></button>
+                            <button class="carousel-dot w-2 h-2 rounded-full bg-white/40 hover:bg-white transition-colors" data-index="1"></button>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-slate-400 mt-3">以上截图基于量盾安全中心</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 下载按钮区域 -->
+        <section id="download" class="py-10 sm:py-16">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 fade-in fade-in-delay-2">
+                    <!-- 量盾安全中心：主按钮 + 下拉 -->
+                    <div class="download-dropdown relative w-full sm:w-auto">
+                        <div class="btn-primary inline-flex items-center w-full rounded-xl text-sm font-medium overflow-hidden">
+                            <a id="download-center-main" href="https://pf1.cn-nb1.rains3.com/liangdun6setup.exe" class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 relative z-10 flex-1">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                <span id="btn-text-center">下载量盾安全中心</span>
+                            </a>
+                            <div class="w-px h-5 bg-white/30 relative z-10 flex-shrink-0"></div>
+                            <button type="button" class="dropdown-toggle inline-flex items-center justify-center px-3 py-3.5 relative z-10 flex-shrink-0" aria-label="展开下载选项">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="dropdown-menu hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl shadow-slate-200/50 border border-slate-200/80 py-2 z-50">
+                            <a id="download-center-primary" href="https://pf1.cn-nb1.rains3.com/liangdun6setup.exe" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                                <i data-lucide="cloud-download" class="w-4 h-4 text-brand-500"></i>
+                                <span>主链接下载</span>
+                            </a>
+                            <a id="download-center-backup" href="https://pan.tenire.com/down.php/0b1b6d279e7525d08ed577293405d901.exe" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                                <i data-lucide="archive" class="w-4 h-4 text-brand-500"></i>
+                                <span>备用链接下载</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <a id="download-kill" href="https://pf1.cn-nb1.rains3.com/ldkillsetup.exe" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-medium">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span id="btn-text-kill">下载量盾专杀工具</span>
+                    </a>
+                    <a id="download-browser" href="https://pf1.cn-nb1.rains3.com/liangdunesetup.exe" class="btn-browser w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-medium">
+                        <i data-lucide="globe" class="w-4 h-4"></i>
+                        <span id="btn-text-browser">下载量盾安全浏览器</span>
+                        <span class="badge-new">NEW</span>
+                    </a>
+                    <a id="download-github" href="https://github.com/wemebabo57-a11y/LIANGDUN" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-medium">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span id="btn-text-github">前往项目仓库</span>
+                    </a>
+                </div>
+
+                <!-- 新增：样本分享网盘入口（下载区下方，醒目但不喧宾夺主） -->
+                <div class="mt-5 text-center fade-in fade-in-delay-3">
+                    <a href="https://pan.liangdun.top/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-purple-600 transition-colors group">
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-purple-50 text-purple-600 group-hover:bg-purple-100 transition-colors">
+                            <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                        </span>
+                        <span class="font-medium">前往样本分享网盘</span>
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="divider-gradient"></div>
+        </div>
+
+        <!-- 产品介绍 - 核心特性 -->
+        <section id="features" class="py-16 sm:py-24 section-alt">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12 sm:mb-14 scroll-reveal">
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight mb-3">产品介绍</h2>
+                    <p class="text-slate-400 text-base">简单、纯粹、不臃肿</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 scroll-reveal">
+                        <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center mb-5">
+                            <i data-lucide="package" class="w-5 h-5 text-brand-500"></i>
+                        </div>
+                        <h3 class="text-base font-semibold text-slate-900 mb-2.5">极致轻量安装包</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">
+                            安装包体积极小，没有冗余组件，不捆绑任何附加软件，安装后占用空间可控。
+                        </p>
+                    </div>
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 scroll-reveal">
+                        <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center mb-5">
+                            <i data-lucide="wifi-off" class="w-5 h-5 text-brand-500"></i>
+                        </div>
+                        <h3 class="text-base font-semibold text-slate-900 mb-2.5">引擎完全本地运行</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">
+                            引擎完全本地运行，仅在更新病毒库时需要联网。断网环境下仍可正常执行扫描与查杀。
+                        </p>
+                    </div>
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 scroll-reveal">
+                        <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center mb-5">
+                            <i data-lucide="target" class="w-5 h-5 text-brand-500"></i>
+                        </div>
+                        <h3 class="text-base font-semibold text-slate-900 mb-2.5">可靠的查杀能力</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">
+                            基于本地特征库进行已知病毒检测，同时具备一定的未知威胁启发式识别能力。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="divider-gradient"></div>
+        </div>
+
+        <!-- 关于量盾 -->
+        <section class="py-16 sm:py-24">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12 sm:mb-14 scroll-reveal">
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight mb-3">关于量盾</h2>
+                    <p class="text-slate-400 text-base">我们的出发点</p>
+                </div>
+
+                <div class="max-w-3xl mx-auto scroll-reveal">
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-10">
+                        <div class="space-y-5 text-sm text-slate-600 leading-relaxed">
+                            <p>
+                                量盾安全软件是一款面向 Windows 平台的免费安全防护工具，源代码在 GitHub 上公开。项目的初衷很简单：做一款不臃肿、不打扰用户、能切实完成安全防护工作的软件。
+                            </p>
+                            <p>
+                                当前市面上许多安全软件体积庞大、功能冗余，往往附带大量用户并不需要的附加模块，甚至存在弹窗广告和后台驻留难以关闭的问题。量盾希望以另一种方式来做安全软件——把核心的扫描和查杀做好，其余的交给用户自己决定。
+                            </p>
+                            <p>
+                                量盾安全中心是主程序，提供实时防护、多种扫描模式、启动项管理、日志记录等功能。量盾专杀工具则是一个独立的扫描强工具，基于 ClamAV 开源反病毒引擎，适合在需要快速排查和清除威胁的场景下使用，无需安装，下载后直接运行。量盾安全浏览器是一款注重安全与隐私的浏览器，为你的上网提供额外一层防护。
+                            </p>
+                            <p>
+                                项目持续维护中，欢迎通过 GitHub 提交问题反馈和代码贡献。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="divider-gradient"></div>
+        </div>
+
+        <!-- 功能详情 -->
+        <section id="details" class="py-16 sm:py-24 section-alt">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12 sm:mb-14 scroll-reveal">
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight mb-3">功能详情</h2>
+                    <p class="text-slate-400 text-base">了解量盾的每一项能力</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- 卡片：扫描模式 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 scroll-reveal">
+                        <div class="flex items-start gap-4 mb-5">
+                            <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="scan-search" class="w-5 h-5 text-brand-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-slate-900 mb-1">多种扫描模式</h3>
+                                <p class="text-sm text-slate-400">按需选择，灵活应对不同场景</p>
+                            </div>
+                        </div>
+                        <div class="space-y-0 border border-slate-100 rounded-xl overflow-hidden">
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">快速扫描</span>
+                                <span class="text-xs text-slate-400">扫描系统关键目录</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">全盘扫描</span>
+                                <span class="text-xs text-slate-400">遍历所有磁盘分区</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3">
+                                <span class="text-sm text-slate-600">自定义扫描</span>
+                                <span class="text-xs text-slate-400">指定文件或目录</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片：处理方式 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 scroll-reveal">
+                        <div class="flex items-start gap-4 mb-5">
+                            <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="shield-alert" class="w-5 h-5 text-brand-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-slate-900 mb-1">威胁处理方式</h3>
+                                <p class="text-sm text-slate-400">发现威胁后的处理策略</p>
+                            </div>
+                        </div>
+                        <div class="space-y-0 border border-slate-100 rounded-xl overflow-hidden">
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">自动清除</span>
+                                <span class="text-xs text-slate-400">默认处理方式</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">隔离区隔离</span>
+                                <span class="text-xs text-slate-400">安全保留样本</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">仅告警不处理</span>
+                                <span class="text-xs text-slate-400">由用户手动决定</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3">
+                                <span class="text-sm text-slate-600">信任并加入白名单</span>
+                                <span class="text-xs text-slate-400">误报时使用</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片：防护体系 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 scroll-reveal">
+                        <div class="flex items-start gap-4 mb-5">
+                            <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="layers" class="w-5 h-5 text-brand-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-slate-900 mb-1">防护体系</h3>
+                                <p class="text-sm text-slate-400">多层级的安全防线</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-brand-400 mt-1.5 flex-shrink-0"></div>
+                                <p class="text-sm text-slate-600 leading-relaxed"><span class="text-slate-800 font-medium">实时防护</span> — 文件读写时自动检测，阻止恶意程序运行</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-brand-400 mt-1.5 flex-shrink-0"></div>
+                                <p class="text-sm text-slate-600 leading-relaxed"><span class="text-slate-800 font-medium">启动项管理</span> — 查看并管理系统启动项，减少恶意驻留</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-brand-400 mt-1.5 flex-shrink-0"></div>
+                                <p class="text-sm text-slate-600 leading-relaxed"><span class="text-slate-800 font-medium">日志记录</span> — 完整记录扫描与处理历史，便于追溯</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片：专杀工具 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 scroll-reveal">
+                        <div class="flex items-start gap-4 mb-5">
+                            <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="syringe" class="w-5 h-5 text-brand-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-slate-900 mb-1">量盾专杀工具</h3>
+                                <p class="text-sm text-slate-400">独立的应急排查工具</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3 mb-5">
+                            <div class="flex items-start gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-brand-400 mt-1.5 flex-shrink-0"></div>
+                                <p class="text-sm text-slate-600 leading-relaxed">基于 <span class="text-slate-800 font-medium">ClamAV</span> 开源反病毒引擎，使用其经过广泛验证的特征库进行检测</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-brand-400 mt-1.5 flex-shrink-0"></div>
+                                <p class="text-sm text-slate-600 leading-relaxed">安装后直接运行，适合紧急应急场景</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-brand-400 mt-1.5 flex-shrink-0"></div>
+                                <p class="text-sm text-slate-600 leading-relaxed">建议与量盾安全中心配合使用，也可单独使用</p>
+                            </div>
+                        </div>
+                        <div class="space-y-0 border border-slate-100 rounded-xl overflow-hidden">
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">扫描引擎</span>
+                                <span class="text-sm text-slate-800 font-medium">ClamAV</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">使用方式</span>
+                                <span class="text-sm text-slate-800 font-medium">安装后直接运行</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3">
+                                <span class="text-sm text-slate-600">适用场景</span>
+                                <span class="text-sm text-slate-800 font-medium">应急排查与清除</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 安全中心 vs 专杀工具 对比 -->
+                <div class="mt-8 scroll-reveal">
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+                        <div class="flex items-start gap-4 mb-5">
+                            <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="git-compare" class="w-5 h-5 text-brand-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-slate-900 mb-1">安全中心 · 专杀工具 对比</h3>
+                                <p class="text-sm text-slate-400">一目了然的优缺点，帮你快速选择</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div class="border border-slate-100 rounded-xl p-5 bg-slate-50/30">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <i data-lucide="shield" class="w-5 h-5 text-brand-500"></i>
+                                    <h4 class="font-medium text-slate-800">量盾安全中心</h4>
+                                </div>
+                                <ul class="space-y-3 text-sm">
+                                    <li class="flex items-center gap-3">
+                                        <span class="text-green-600 text-base leading-5">✓</span>
+                                        <span class="text-slate-700">体积小 — 安装包轻量，占用资源少</span>
+                                    </li>
+                                    <li class="flex items-center gap-3">
+                                        <span class="text-green-600 text-base leading-5">✓</span>
+                                        <span class="text-slate-700">功能多 — 实时防护、多模式扫描、启动项管理等</span>
+                                    </li>
+                                    <li class="flex items-center gap-3">
+                                        <span class="text-amber-500 text-base leading-5">⚠</span>
+                                        <span class="text-slate-700">杀毒能力较低 — 适合日常基础防护</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="border border-slate-100 rounded-xl p-5 bg-slate-50/30">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <i data-lucide="syringe" class="w-5 h-5 text-brand-500"></i>
+                                    <h4 class="font-medium text-slate-800">量盾专杀工具</h4>
+                                </div>
+                                <ul class="space-y-3 text-sm">
+                                    <li class="flex items-center gap-3">
+                                        <span class="text-amber-500 text-base leading-5">⚠</span>
+                                        <span class="text-slate-700">体积大 — 集成 ClamAV 引擎，文件较大</span>
+                                    </li>
+                                    <li class="flex items-center gap-3">
+                                        <span class="text-amber-500 text-base leading-5">⚠</span>
+                                        <span class="text-slate-700">功能少 — 专注扫描查杀，无实时防护</span>
+                                    </li>
+                                    <li class="flex items-center gap-3">
+                                        <span class="text-green-600 text-base leading-5">✓</span>
+                                        <span class="text-slate-700">杀毒能力极强 — 深度扫描，清除顽固威胁</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-5 border-t border-slate-100 pt-4">日常使用推荐安全中心；遇到顽固病毒或应急场景，专杀工具是更强后盾。</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 软件信息 -->
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="divider-gradient"></div>
+        </div>
+        <section class="py-16 sm:py-24">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="max-w-lg mx-auto scroll-reveal">
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+                        <div class="flex items-start gap-4 mb-5">
+                            <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="info" class="w-5 h-5 text-brand-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-slate-900 mb-1">软件信息</h3>
+                                <p class="text-sm text-slate-400">基本信息一览</p>
+                            </div>
+                        </div>
+                        <div class="space-y-0 border border-slate-100 rounded-xl overflow-hidden">
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">软件性质</span>
+                                <span class="text-sm text-slate-800 font-medium">免费软件</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">开源状态</span>
+                                <span class="text-sm text-slate-800 font-medium">大部分源代码开放</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">适配系统</span>
+                                <span class="text-sm text-slate-800 font-medium">Windows</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">后台驻留</span>
+                                <span class="text-sm text-slate-800 font-medium">可选关闭</span>
+                            </div>
+                            <div class="detail-row flex items-center justify-between px-4 py-3">
+                                <span class="text-sm text-slate-600">广告弹窗</span>
+                                <span class="text-sm text-brand-600 font-medium">无</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系支持 -->
+        <section id="support" class="py-12 sm:py-16 section-alt">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="max-w-2xl mx-auto scroll-reveal">
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+                        <div class="flex items-start gap-4 mb-5">
+                            <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="mail" class="w-5 h-5 text-brand-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-slate-900 mb-1">联系支持</h3>
+                                <p class="text-sm text-slate-400">有任何问题或建议，欢迎通过邮件联系我们</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+                                <i data-lucide="at-sign" class="w-4 h-4 text-slate-400 flex-shrink-0"></i>
+                                <span class="text-sm text-slate-600 hidden sm:inline">主邮箱：</span>
+                                <a href="mailto:QQ201324qq0596@outlook.com" class="text-sm text-brand-600 font-medium hover:underline break-all">QQ201324qq0596@outlook.com</a>
+                                <span class="text-xs text-slate-400 ml-auto hidden sm:block">(推荐)</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+                                <i data-lucide="mail-plus" class="w-4 h-4 text-slate-400 flex-shrink-0"></i>
+                                <span class="text-sm text-slate-600 hidden sm:inline">备用邮箱：</span>
+                                <a href="mailto:wemebabo57@gmail.com" class="text-sm text-brand-600 font-medium hover:underline break-all">wemebabo57@gmail.com</a>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-4 flex items-center gap-1.5">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                            通常会在 48 小时内回复，感谢支持量盾。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部再次下载引导 -->
+        <section class="pb-16 sm:pb-24">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="cta-box rounded-2xl border border-slate-100 py-10 sm:py-12 px-4 sm:px-6 text-center scroll-reveal">
+                    <h3 class="text-xl font-semibold text-slate-900 mb-2">准备好体验了？</h3>
+                    <p class="text-sm text-slate-400 mb-8">免费下载，无需注册，即装即用</p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <!-- 量盾安全中心：主按钮 + 下拉 -->
+                        <div class="download-dropdown relative w-full sm:w-auto">
+                            <div class="btn-primary inline-flex items-center w-full rounded-xl text-sm font-medium overflow-hidden">
+                                <a id="download-center-main-2" href="https://pf1.cn-nb1.rains3.com/liangdun6setup.exe" class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 relative z-10 flex-1">
+                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                    <span id="btn-text-center-2">下载量盾安全中心</span>
+                                </a>
+                                <div class="w-px h-5 bg-white/30 relative z-10 flex-shrink-0"></div>
+                                <button type="button" class="dropdown-toggle inline-flex items-center justify-center px-3 py-3.5 relative z-10 flex-shrink-0" aria-label="展开下载选项">
+                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl shadow-slate-200/50 border border-slate-200/80 py-2 z-50">
+                                <a id="download-center-primary-2" href="https://pf1.cn-nb1.rains3.com/liangdun6setup.exe" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                                    <i data-lucide="cloud-download" class="w-4 h-4 text-brand-500"></i>
+                                    <span>主链接下载</span>
+                                </a>
+                                <a id="download-center-backup-2" href="https://pan.tenire.com/down.php/0b1b6d279e7525d08ed577293405d901.exe" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                                    <i data-lucide="archive" class="w-4 h-4 text-brand-500"></i>
+                                    <span>备用链接下载</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <a id="download-kill-2" href="https://pf1.cn-nb1.rains3.com/ldkillsetup.exe" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-medium">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            <span id="btn-text-kill-2">下载量盾专杀工具</span>
+                        </a>
+                        <a id="download-browser-2" href="https://pf1.cn-nb1.rains3.com/liangdunesetup.exe" class="btn-browser w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-medium">
+                            <i data-lucide="globe" class="w-4 h-4"></i>
+                            <span id="btn-text-browser-2">下载量盾安全浏览器</span>
+                            <span class="badge-new">NEW</span>
+                        </a>
+                        <a id="download-github-2" href="https://github.com/wemebabo57-a11y" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-medium">
+                            <i data-lucide="github" class="w-4 h-4"></i>
+                            <span id="btn-text-github-2">前往项目仓库</span>
+                        </a>
+                    </div>
+                    <!-- 情报社区 & 工具站 双入口 -->
+                    <div class="mt-6 pt-5 border-t border-slate-200/60">
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 flex-wrap">
+                            <a href="https://www.liangdun.top" target="_blank" rel="noopener" class="btn-community inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium">
+                                <i data-lucide="radio" class="w-4 h-4"></i>
+                                前往威胁情报社区
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </a>
+                            <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium">
+                                <i data-lucide="wrench" class="w-4 h-4"></i>
+                                前往工具站
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </a>
+                            <!-- 新增：底部 CTA 样本网盘入口 -->
+                            <a href="https://pan.liangdun.top/" target="_blank" rel="noopener" class="btn-netdisk inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium">
+                                <i data-lucide="folder-open" class="w-4 h-4"></i>
+                                前往样本分享网盘
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </a>
+                            <a href="https://liangdun.wemebabo57.workers.dev/" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium">
+                                <i data-lucide="globe" class="w-4 h-4"></i>
+                                前往国际站
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-3">分享威胁情报 · 查阅安全资讯 · 获取安全工具 · 样本共享研究 · 访问国际站点</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 底部版权 -->
+    <footer class="border-t border-slate-100">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p class="text-center text-sm text-slate-400">量盾安全软件 © 2026 版权所有</p>
+                <div class="flex items-center gap-4 text-sm text-slate-400 flex-wrap justify-center">
+                    <a href="mailto:QQ201324qq0596@outlook.com" class="hover:text-brand-600 transition-colors flex items-center gap-1">
+                        <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">联系支持</span>
+                    </a>
+                    <a href="#support" class="hover:text-brand-600 transition-colors">支持</a>
+                    <a href="https://www.liangdun.top" target="_blank" rel="noopener" class="hover:text-brand-600 transition-colors flex items-center gap-1">
+                        <i data-lucide="radio" class="w-3.5 h-3.5"></i>
+                        <span>情报社区</span>
+                    </a>
+                    <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="hover:text-brand-600 transition-colors flex items-center gap-1">
+                        <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
+                        <span>工具站</span>
+                    </a>
+                    <!-- 新增：页脚样本网盘链接 -->
+                    <a href="https://pan.liangdun.top/" target="_blank" rel="noopener" class="hover:text-purple-600 transition-colors flex items-center gap-1">
+                        <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                        <span>样本网盘</span>
+                    </a>
+                    <a href="https://liangdun.wemebabo57.workers.dev/" target="_blank" rel="noopener" class="hover:text-brand-600 transition-colors flex items-center gap-1">
+                        <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                        <span>国际站</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 后台管理入口 -->
+    <a href="admin.html" class="admin-entry" title="进入后台管理">
+        <i data-lucide="settings" class="w-5 h-5"></i>
+    </a>
+
+    <script>
+        // 默认配置
+        const defaultConfig = {
+            siteTitle: '量盾安全软件 · 轻量本地安全中心',
+            siteLogo: 'https://1850287558.v.123pan.cn/1850287558/47986573',
+            siteFavicon: '/favicon.png',
+            downloads: {
+                center: {
+                    name: '下载量盾安全中心',
+                    url: 'https://pf1.cn-nb1.rains3.com/liangdun6setup.exe',
+                    backup: 'https://pan.tenire.com/down.php/0b1b6d279e7525d08ed577293405d901.exe'
+                },
+                kill: {
+                    name: '下载量盾专杀工具',
+                    url: 'https://pf1.cn-nb1.rains3.com/ldkillsetup.exe'
+                },
+                browser: {
+                    name: '下载量盾安全浏览器',
+                    url: 'https://pf1.cn-nb1.rains3.com/liangdunesetup.exe'
+                },
+                github: {
+                    name: '前往项目仓库',
+                    url: 'https://github.com/wemebabo57-a11y/LIANGDUN'
+                }
+            },
+            promoImages: {
+                img1: 'https://pan.tenire.com/down.php/b89012f7ee86b1ea1e18df2762302201.png',
+                img2: 'https://pan.tenire.com/down.php/4a279ccb50210dab5f82e141f783d9f2.png'
+            }
+        };
+        
+        // 获取配置
+        function getConfig() {
+            const saved = localStorage.getItem('liangdun_config');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return defaultConfig;
+        }
+        
+        // 应用配置到页面
+        function applyConfig() {
+            const config = getConfig();
+            
+            // 网站标题
+            if (config.siteTitle) {
+                document.title = config.siteTitle;
+                document.getElementById('page-title').textContent = config.siteTitle;
+            }
+            
+            // Favicon
+            if (config.siteFavicon) {
+                document.getElementById('page-favicon').href = config.siteFavicon;
+            }
+            
+            // Logo
+            if (config.siteLogo) {
+                document.getElementById('nav-logo').src = config.siteLogo;
+                document.getElementById('hero-logo').src = config.siteLogo;
+            }
+            
+            // 下载按钮 - 安全中心
+            if (config.downloads?.center) {
+                document.getElementById('btn-text-center').textContent = config.downloads.center.name;
+                document.getElementById('btn-text-center-2').textContent = config.downloads.center.name;
+                document.getElementById('download-center-main').href = config.downloads.center.url;
+                document.getElementById('download-center-main-2').href = config.downloads.center.url;
+                document.getElementById('download-center-primary').href = config.downloads.center.url;
+                document.getElementById('download-center-primary-2').href = config.downloads.center.url;
+                if (config.downloads.center.backup) {
+                    document.getElementById('download-center-backup').href = config.downloads.center.backup;
+                    document.getElementById('download-center-backup-2').href = config.downloads.center.backup;
+                }
+            }
+            
+            // 下载按钮 - 专杀工具
+            if (config.downloads?.kill) {
+                document.getElementById('btn-text-kill').textContent = config.downloads.kill.name;
+                document.getElementById('btn-text-kill-2').textContent = config.downloads.kill.name;
+                document.getElementById('download-kill').href = config.downloads.kill.url;
+                document.getElementById('download-kill-2').href = config.downloads.kill.url;
+            }
+            
+            // 下载按钮 - 浏览器
+            if (config.downloads?.browser) {
+                document.getElementById('btn-text-browser').textContent = config.downloads.browser.name;
+                document.getElementById('btn-text-browser-2').textContent = config.downloads.browser.name;
+                document.getElementById('download-browser').href = config.downloads.browser.url;
+                document.getElementById('download-browser-2').href = config.downloads.browser.url;
+            }
+            
+            // 下载按钮 - GitHub
+            if (config.downloads?.github) {
+                document.getElementById('btn-text-github').textContent = config.downloads.github.name;
+                document.getElementById('btn-text-github-2').textContent = config.downloads.github.name;
+                document.getElementById('download-github').href = config.downloads.github.url;
+                document.getElementById('download-github-2').href = config.downloads.github.url;
+            }
+            
+            // 宣传图
+            if (config.promoImages?.img1) {
+                document.getElementById('promo-img-1').src = config.promoImages.img1;
+            }
+            if (config.promoImages?.img2) {
+                document.getElementById('promo-img-2').src = config.promoImages.img2;
+            }
+        }
+        
+        // 页面加载时应用配置
+        document.addEventListener('DOMContentLoaded', function() {
+            applyConfig();
+        });
+
+        // 初始化图标
+        lucide.createIcons();
+
+        // 滚动触发动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 下载下拉菜单交互
+        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const menu = this.closest('.download-dropdown').querySelector('.dropdown-menu');
+                const isHidden = menu.classList.contains('hidden');
+                
+                // 关闭所有其他下拉菜单
+                document.querySelectorAll('.dropdown-menu').forEach(m => {
+                    if (m !== menu) m.classList.add('hidden');
+                });
+                
+                menu.classList.toggle('hidden', !isHidden);
+            });
+        });
+
+        // 点击外部关闭下拉菜单
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.download-dropdown')) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+
+        // 宣传图轮播
+        (function() {
+            const images = document.querySelectorAll('.carousel-img');
+            const dots = document.querySelectorAll('.carousel-dot');
+            let currentIndex = 0;
+            const interval = 5000; // 5秒切换
+
+            function showImage(index) {
+                images.forEach((img, i) => {
+                    img.style.opacity = i === index ? '1' : '0';
+                });
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+                currentIndex = index;
+            }
+
+            function nextImage() {
+                const nextIndex = (currentIndex + 1) % images.length;
+                showImage(nextIndex);
+            }
+
+            // 自动轮播
+            let timer = setInterval(nextImage, interval);
+
+            // 点击指示器切换
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    clearInterval(timer);
+                    showImage(index);
+                    timer = setInterval(nextImage, interval);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
