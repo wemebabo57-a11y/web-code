@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>量盾工具站 · 轻量实用工具集</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script src="https://unpkg.com/lucide@latest">
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a5f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        ::selection {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        /* Hero 背景动画 */
+        .hero-section {
+            background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.02) 40%, transparent 70%);
+            pointer-events: none;
+            animation: heroPulse 6s ease-in-out infinite;
+        }
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(147, 197, 253, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+            animation: heroPulse 8s ease-in-out infinite reverse;
+        }
+        @keyframes heroPulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+
+        /* 网格装饰 */
+        .grid-bg {
+            background-image: linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* 淡入动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .fade-in-delay-1 {
+            animation-delay: 0.1s;
+        }
+        .fade-in-delay-2 {
+            animation-delay: 0.2s;
+        }
+        .fade-in-delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo 光环 */
+        .logo-glow {
+            position: relative;
+        }
+        .logo-glow::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 197, 253, 0.1));
+            filter: blur(12px);
+            z-index: -1;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+        @keyframes logoGlow {
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* 按钮样式 */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: #fff;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.35);
+            transform: translateY(-2px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .btn-primary span,
+        .btn-primary i {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: #1e3a5f;
+            border: 1.5px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+        .btn-secondary:hover {
+            border-color: #3b82f6;
+            color: #2563eb;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        /* 卡片样式 */
+        .feature-card {
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .feature-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
+            transform: translateY(-4px);
+        }
+
+        .icon-box {
+            position: relative;
+        }
+        .icon-box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .feature-card:hover .icon-box::after {
+            opacity: 1;
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .divider-gradient {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
+        }
+        .section-alt {
+            background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%);
+        }
+
+        /* 工具徽章占位装饰 */
+        .tool-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            background: #eef2ff;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-white font-sans text-slate-800">
+
+    <!-- 顶部导航 -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-xl border-b border-slate-100/80">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 sm:gap-3 group">
+                <img src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾安全软件" class="w-8 h-8 rounded-lg flex-shrink-0 object-contain">
+                <span class="text-base font-semibold text-slate-900 tracking-tight">量盾工具站</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-6 lg:gap-8">
+                <a href="#tools" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">工具集</a>
+                <a href="#about" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">关于</a>
+                <a href="#support" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">支持</a>
+            </nav>
+            <div class="md:hidden">
+                <span class="text-xs text-slate-400">工具站</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-16">
+        <!-- Hero 区域 -->
+        <section class="hero-section grid-bg relative">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-16 pb-8 sm:pt-28 sm:pb-12 relative z-10">
+                <div class="text-center fade-in">
+                    <div class="flex items-center justify-center gap-3 mb-6">
+                        <div class="logo-glow inline-block">
+                            <img src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾工具站" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl shadow-lg shadow-brand-500/20 object-contain relative z-10">
+                        </div>
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-tight mb-4">
+                        量盾工具站
+                    </h1>
+                    <p class="text-lg sm:text-xl text-slate-400 font-light max-w-xl mx-auto leading-relaxed px-2">
+                        轻量 · 纯粹 · 即开即用
+                    </p>
+                    <div class="mt-5 flex justify-center gap-2">
+                        <span class="tool-badge">本地优先</span>
+                        <span class="tool-badge">纯净无捆绑</span>
+                    </div>
+                </div>
+
+                <div class="mt-10 sm:mt-12 mb-2 fade-in fade-in-delay-1">
+                    <div class="rounded-2xl border border-slate-200/80 bg-white/40 backdrop-blur-sm p-6 text-center shadow-sm">
+                        <i data-lucide="wrench" class="w-10 h-10 text-brand-300 mx-auto mb-2"></i>
+                        <p class="text-sm text-slate-400 font-mono">工具站 · 模块化设计 | 持续迭代强大能力</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 工具卡片区 -->
+        <section id="tools" class="py-16 sm:py-24">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12 sm:mb-14 scroll-reveal">
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight mb-3">量盾工具集</h2>
+                    <p class="text-slate-400 text-base">模块化工具箱 · 持续丰富中</p>
+                    <div class="w-16 h-0.5 bg-brand-200 mx-auto mt-3 rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+                    <!-- 工具卡片 1 : 系统工具箱 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 scroll-reveal">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center">
+                                <i data-lucide="cpu" class="w-6 h-6 text-brand-500"></i>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-300">v0.1</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">量盾·系统工具箱</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-5">
+                            系统优化工具集<br>
+                            能力预热中，敬请期待深度功能。
+                        </p>
+                        <div class="flex gap-3 mt-2">
+                            <button onclick="alert('✨ 工具详细介绍即将开放，请保持关注量盾工具站。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
+                            </button>
+                            <button onclick="alert('📦 下载模块尚未开放，敬请关注后续版本。')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 工具卡片 2 : 隐私清道夫 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 scroll-reveal">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center">
+                                <i data-lucide="shield-check" class="w-6 h-6 text-brand-500"></i>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-300">规划中</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">量盾·隐私清道夫</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-5">
+                            隐私保护模块<br>
+                            即将注入完整防护逻辑，敬请期待。
+                        </p>
+                        <div class="flex gap-3 mt-2">
+                            <button onclick="alert('🔍 详情页正在构建，敬请期待完整工具信息。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
+                            </button>
+                            <button onclick="alert('📥 下载通道暂未开启，请关注后续正式版。')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 工具卡片 3 : 启动管家 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 scroll-reveal">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center">
+                                <i data-lucide="zap" class="w-6 h-6 text-brand-500"></i>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-300">筹备</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">量盾·启动管家</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-5">
+                            启动项管理模块<br>
+                            性能优化组件，即将上线。
+                        </p>
+                        <div class="flex gap-3 mt-2">
+                            <button onclick="alert('⚙️ 工具详情暂未上线，未来会提供完整介绍。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
+                            </button>
+                            <button onclick="alert('🚀 下载功能暂未开放，敬请期待。')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 工具卡片 4 : 网络诊断仪 (已激活真实内容) -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 scroll-reveal">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center overflow-hidden">
+                                <img src="https://1850287558.v.123pan.cn/1850287558/53933225" alt="网络诊断仪" class="w-10 h-10 rounded-lg object-contain">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-300">v1.0</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">量盾·网络诊断仪</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-5">
+                            全面的网络连接检测工具<br>
+                            WiFi状态诊断与安全扫描，快速定位网络问题。
+                        </p>
+                        <div class="flex gap-3 mt-2">
+                            <button onclick="alert('🌐 网络诊断工具详情页即将开放，敬请关注。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
+                            </button>
+                            <button onclick="window.location.href='https://pf1.cn-nb1.rains3.com/wifi2.exe'" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 工具卡片 5 : 文件分析器 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 scroll-reveal">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center">
+                                <i data-lucide="file-search" class="w-6 h-6 text-brand-500"></i>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-300">开发中</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">量盾·文件分析器</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-5">
+                            文件深度扫描模块<br>
+                            元数据提取与安全分析工具。
+                        </p>
+                        <div class="flex gap-3 mt-2">
+                            <button onclick="alert('📄 文件分析工具详情页建设中，敬请关注后续更新。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
+                            </button>
+                            <button onclick="alert('📎 当前版本下载入口未激活，敬请期待。')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 工具卡片 6 : 存储分析 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 scroll-reveal">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center">
+                                <i data-lucide="hard-drive" class="w-6 h-6 text-brand-500"></i>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-300">规划中</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">量盾·存储分析</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-5">
+                            磁盘空间统计模块<br>
+                            大文件管理与存储优化工具。
+                        </p>
+                        <div class="flex gap-3 mt-2">
+                            <button onclick="alert('🧩 详情模块即将上线，架构已预留好扩展位。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
+                            </button>
+                            <button onclick="alert('💽 下载未开放，敬请关注后续版本。')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 说明条 -->
+                <div class="mt-12 text-center scroll-reveal">
+                    <div class="inline-flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-5 py-2 text-xs text-slate-500">
+                        <i data-lucide="square-code" class="w-3.5 h-3.5"></i>
+                        <span>工具站持续迭代中 · 网络诊断仪已开放下载，更多工具即将上线</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="divider-gradient"></div>
+        </div>
+
+        <!-- 关于量盾工具站 -->
+        <section id="about" class="py-16 sm:py-24 section-alt">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12 sm:mb-14 scroll-reveal">
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight mb-3">关于工具站</h2>
+                    <p class="text-slate-400 text-base">量盾生态 · 纯粹工具集合</p>
+                </div>
+
+                <div class="max-w-3xl mx-auto scroll-reveal">
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-10 text-center">
+                        <div class="flex justify-center mb-5">
+                            <img src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾工具站" class="w-16 h-16 rounded-xl shadow-md object-contain">
+                        </div>
+                        <div class="space-y-4 text-sm text-slate-500 leading-relaxed">
+                            <p>
+                                量盾工具站是量盾安全软件旗下的独立工具箱，致力于提供轻量、纯净、开箱即用的系统工具集合。
+                            </p>
+                            <p>
+                                每个工具均包含品牌Logo标识、功能介绍区域及「详情/下载」入口。
+                                网络诊断仪已率先开放下载，其余工具模块正在持续丰富中。
+                            </p>
+                            <p class="text-slate-400 text-xs">
+                                后续将逐步丰富各工具能力，保持量盾一贯的本地优先、不捆绑、无广告的设计哲学。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="divider-gradient"></div>
+        </div>
+
+        <!-- 支持模块 -->
+        <section id="support" class="py-16 sm:py-20">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="max-w-lg mx-auto scroll-reveal">
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+                        <div class="flex items-start gap-4 mb-5">
+                            <div class="icon-box w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="message-circle" class="w-5 h-5 text-brand-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-slate-900 mb-1">联系与反馈</h3>
+                                <p class="text-sm text-slate-400">反馈通道</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+                                <i data-lucide="at-sign" class="w-4 h-4 text-slate-400 flex-shrink-0"></i>
+                                <span class="text-sm text-slate-500">工具站官方邮箱：</span>
+                                <span class="text-sm text-slate-400 font-mono">tools@liangdun (暂未启用)</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+                                <i data-lucide="clock" class="w-4 h-4 text-slate-400 flex-shrink-0"></i>
+                                <span class="text-sm text-slate-500">响应状态：</span>
+                                <span class="text-sm text-slate-400">正式反馈渠道稍后开放</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-4 flex items-center gap-1.5 justify-center">
+                            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+                            量盾品牌 · 工具站
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 CTA 区域 -->
+        <section class="pb-16 sm:pb-24">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50/80 to-white py-10 sm:py-12 px-4 sm:px-6 text-center scroll-reveal shadow-sm">
+                    <i data-lucide="tool" class="w-10 h-10 text-brand-400 mx-auto mb-3"></i>
+                    <h3 class="text-xl font-semibold text-slate-900 mb-2">量盾工具站 · 持续进化</h3>
+                    <p class="text-sm text-slate-400 mb-6">更多实用工具即将登场，网络诊断仪已可下载体验</p>
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+                        <button onclick="window.location.href='https://pf1.cn-nb1.rains3.com/wifi2.exe'" class="btn-primary inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i> 下载网络诊断仪
+                        </button>
+                        <button onclick="alert('📍 更多工具正在开发中，敬请关注量盾工具站更新。')" class="btn-secondary inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium">
+                            <i data-lucide="notebook-text" class="w-4 h-4"></i> 了解更多
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-5">© 量盾安全软件 · 工具站持续更新，网络诊断仪已开放下载</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部版权 -->
+    <footer class="border-t border-slate-100">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p class="text-center text-sm text-slate-400">量盾工具站 · 轻量工具箱 © 2026 量盾安全软件</p>
+                <div class="flex items-center gap-4 text-sm text-slate-400">
+                    <a href="#support" class="hover:text-brand-600 transition-colors flex items-center gap-1">
+                        <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                        <span>反馈</span>
+                    </a>
+                    <a href="#tools" class="hover:text-brand-600 transition-colors">工具集</a>
+                    <span class="text-xs text-slate-300">| 持续迭代</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 初始化所有lucide图标
+        lucide.createIcons();
+
+        // 滚动触发动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
