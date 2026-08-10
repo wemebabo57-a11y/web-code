@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>加入我们 · 量盾安全软件</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['system-ui','-apple-system','BlinkMacSystemFont','Segoe UI','PingFang SC','Microsoft YaHei','sans-serif'] } } }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        :root {
+            --z-base: 0; --z-header: 50; --z-overlay: 60; --z-toast: 70;
+        }
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+            color: #171717; background: #fff; overflow-x: hidden;
+        }
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+            background: linear-gradient(90deg, #171717 0%, #525252 100%);
+            z-index: var(--z-overlay); transition: width 0.1s ease-out;
+        }
+        ::selection { background: #171717; color: #fff; }
+        .hero-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+        .hero-bg::before {
+            content: ''; position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
+            width: 700px; height: 700px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(23,23,23,0.04) 0%, rgba(23,23,23,0.01) 40%, transparent 70%);
+            animation: heroPulse 8s ease-in-out infinite;
+        }
+        @keyframes heroPulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.7; transform: translateX(-50%) scale(1.05); }
+        }
+        .logo-glow { position: relative; }
+        .logo-glow::after {
+            content: ''; position: absolute; inset: -6px; border-radius: 20px;
+            background: linear-gradient(135deg, rgba(23,23,23,0.12), rgba(82,82,82,0.04));
+            filter: blur(14px); z-index: -1; animation: logoGlow 3s ease-in-out infinite;
+        }
+        @keyframes logoGlow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        .btn-primary {
+            background: #171717; color: #fff;
+            transition: background 0.25s ease, transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
+            position: relative; overflow: hidden;
+        }
+        .btn-primary::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, #404040 0%, #262626 100%);
+            opacity: 0; transition: opacity 0.25s ease;
+        }
+        .btn-primary:hover { box-shadow: 0 8px 28px rgba(23,23,23,0.22); transform: translateY(-1px); }
+        .btn-primary:hover::before { opacity: 1; }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary > * { position: relative; z-index: 1; }
+        .btn-secondary {
+            background: #fff; color: #171717; border: 1px solid #e5e5e5;
+            transition: border-color 0.25s ease, background 0.25s ease, transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
+        }
+        .btn-secondary:hover {
+            border-color: #171717; background: #fafafa;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05); transform: translateY(-1px);
+        }
+        .btn-secondary:active { transform: translateY(0); }
+        .btn-telegram {
+            background: #229ED9; color: #fff;
+            transition: background 0.25s ease, transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
+            position: relative; overflow: hidden;
+        }
+        .btn-telegram::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, #2BA4E8 0%, #1B8DC4 100%);
+            opacity: 0; transition: opacity 0.25s ease;
+        }
+        .btn-telegram:hover { box-shadow: 0 8px 28px rgba(34,158,217,0.35); transform: translateY(-1px); }
+        .btn-telegram:hover::before { opacity: 1; }
+        .btn-telegram:active { transform: translateY(0); }
+        .btn-telegram > * { position: relative; z-index: 1; }
+        .link { color: #525252; transition: color 0.2s ease; position: relative; }
+        .link::after {
+            content: ''; position: absolute; left: 0; bottom: -4px; width: 0; height: 1px;
+            background: #171717; transition: width 0.25s ease;
+        }
+        .link:hover { color: #171717; }
+        .link:hover::after { width: 100%; }
+        .nav-active { color: #171717 !important; font-weight: 500; }
+        .nav-active::after { width: 100% !important; }
+        .card {
+            background: #fff; border: 1px solid #e5e5e5;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1);
+            position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(23,23,23,0.4), transparent);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .card:hover {
+            border-color: #d4d4d4;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.03);
+            transform: translateY(-2px);
+        }
+        .card:hover::before { opacity: 1; }
+        .divider { height: 1px; background: linear-gradient(90deg, transparent 0%, #e5e5e5 50%, transparent 100%); }
+        .section-muted { background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%); }
+        .icon-box { background: #fafafa; color: #171717; border: 1px solid #e5e5e5; transition: all 0.3s ease; }
+        .card:hover .icon-box { border-color: #171717; box-shadow: 0 2px 8px rgba(23,23,23,0.08); }
+        .scroll-reveal {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+        }
+        .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+        .kbd-focus:focus-visible { outline: 2px solid #171717; outline-offset: 2px; }
+        .section-title {
+            font-size: 13px; font-weight: 600; color: #737373;
+            letter-spacing: 0.05em; text-transform: uppercase;
+        }
+        .back-to-top {
+            position: fixed; right: 1.5rem; bottom: 1.5rem; width: 44px; height: 44px;
+            border-radius: 50%; background: #171717; color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+            box-shadow: 0 6px 20px rgba(23,23,23,0.2);
+            z-index: var(--z-overlay); cursor: pointer; border: none;
+        }
+        .back-to-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .back-to-top:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(23,23,23,0.3); }
+        .value-card { transition: all 0.3s ease; }
+        .value-card:hover .value-icon { background: #171717; color: #fff; border-color: #171717; }
+        .value-icon { transition: all 0.3s ease; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+    <base target="_blank">
+</head>
+<body class="bg-white text-neutral-900">
+    <div class="scroll-progress" id="scrollProgress"></div>
+    <header class="fixed top-0 left-0 right-0 z-[var(--z-header)] bg-white/90 backdrop-blur-md border-b border-neutral-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+            <a href="/index.html" class="flex items-center gap-2.5 kbd-focus rounded" target="_self">
+                <img src="https://pan.kslinmeng.cn/view.php/a969af51b121abb0b57963fbed808ce5.png" alt="量盾安全软件" width="28" height="28" class="w-7 h-7 rounded-md flex-shrink-0 object-contain">
+                <span class="text-sm font-semibold text-neutral-900">量盾安全软件</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="/index.html" class="link text-sm" target="_self">首页</a>
+                <a href="/download.html" class="link text-sm" target="_self">下载</a>
+                <a href="/changelog.html" class="link text-sm" target="_self">更新日志</a>
+                <a href="/about.html" class="link text-sm" target="_self">关于</a>
+                <a href="/join.html" class="link text-sm nav-active" target="_self">加入我们</a>
+                <a href="https://liangdun.top/tools.html" rel="noopener" class="link text-sm">工具站</a>
+            </nav>
+            <button type="button" id="mobileMenuToggle" class="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-md text-neutral-700 hover:bg-neutral-100 kbd-focus" aria-label="打开菜单" aria-expanded="false">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </header>
+    <div id="mobileMenu" class="md:hidden hidden bg-white border-b border-neutral-200 fixed top-14 left-0 right-0 z-[var(--z-header)] shadow-md">
+        <nav class="flex flex-col py-2">
+            <a href="/index.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">首页</a>
+            <a href="/download.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">下载</a>
+            <a href="/changelog.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">更新日志</a>
+            <a href="/about.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">关于</a>
+            <a href="/join.html" class="px-6 py-3 text-sm text-neutral-900 font-medium bg-neutral-50 border-b border-neutral-100" target="_self">加入我们</a>
+            <a href="https://liangdun.top/tools.html" rel="noopener" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50">工具站</a>
+        </nav>
+    </div>
+
+    <main class="pt-14">
+
+        <!-- Hero -->
+        <section class="relative">
+            <div class="hero-bg"></div>
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-14 pb-8 sm:pt-20 sm:pb-12 relative z-10">
+                <div class="text-center scroll-reveal">
+                    <div class="logo-glow inline-block mb-6">
+                        <img src="https://pan.kslinmeng.cn/view.php/a969af51b121abb0b57963fbed808ce5.png" alt="量盾安全软件" width="64" height="64" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mx-auto object-contain shadow-sm relative z-10">
+                    </div>
+                    <p class="section-title mb-3">加入我们</p>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-neutral-900 tracking-tight mb-4">
+                        和量盾一起，做更纯粹的安全
+                    </h1>
+                    <p class="text-base sm:text-lg text-neutral-500 max-w-xl mx-auto leading-relaxed">
+                        非盈利、开放、共建——每一位用户都是量盾前行路上的伙伴
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于量盾（非盈利） -->
+        <section class="pb-12 sm:pb-16">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="max-w-3xl mx-auto scroll-reveal">
+                    <div class="card rounded-xl p-6 sm:p-10">
+                        <div class="flex items-start gap-3 mb-5">
+                            <div class="icon-box w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-neutral-900">量盾是一个非盈利组织</h2>
+                                <p class="text-sm text-neutral-500">不以商业收益为目的，致力于为用户提供免费、纯粹的安全防护</p>
+                            </div>
+                        </div>
+                        <div class="space-y-5 text-sm text-neutral-600 leading-relaxed">
+                            <p>
+                                量盾安全软件从立项之初就确立了一个明确的定位：非盈利。我们不通过软件本身向用户收费，不内置任何广告与推广，也不会为了商业变现而牺牲产品的轻量与纯粹。所有的研发、维护与运营，都是由一群热爱技术、关注安全的志愿者共同推动的。
+                            </p>
+                            <p>
+                                我们相信，安全软件应当是基础设施而非商品。正因如此，量盾始终把用户体验与防护能力放在第一位，把每一行代码、每一次更新都交由社区审视与监督。无论你是普通用户、安全研究者还是开发者，都可以无门槛地使用、反馈、贡献。
+                            </p>
+                            <p>
+                                非盈利并不意味着停滞不前。相反，正是没有商业压力，我们才能更专注地投入到真正重要的事情上——把扫描引擎做得更准，把病毒库做得更全，把响应速度做得更快。这也是量盾能够持续迭代的根本原因。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="divider"></div>
+        </div>
+
+        <!-- 正在开发：自研引擎及病毒库 -->
+        <section class="py-16 sm:py-20 section-muted">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-10 sm:mb-12 scroll-reveal">
+                    <p class="section-title mb-3">研发进展</p>
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-900 tracking-tight">我们正在做的事</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="card value-card rounded-xl p-6 sm:p-8 scroll-reveal">
+                        <div class="value-icon icon-box w-11 h-11 rounded-lg flex items-center justify-center mb-4">
+                            <i data-lucide="cpu" class="w-5 h-5"></i>
+                        </div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <h3 class="text-base font-semibold text-neutral-900">自研扫描引擎</h3>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-neutral-900 text-white">
+                                <i data-lucide="loader" class="w-3 h-3"></i>
+                                开发中
+                            </span>
+                        </div>
+                        <p class="text-sm text-neutral-500 leading-relaxed">
+                            我们正在自主研发全新的扫描引擎，目标是摆脱对第三方引擎的完全依赖，从底层架构上提升检测效率、降低资源占用，并针对本土化威胁场景做深度优化。引擎设计强调模块化与可扩展性，为后续 AI 启发式检测、行为回滚等能力预留接口。
+                        </p>
+                    </div>
+                    <div class="card value-card rounded-xl p-6 sm:p-8 scroll-reveal">
+                        <div class="value-icon icon-box w-11 h-11 rounded-lg flex items-center justify-center mb-4">
+                            <i data-lucide="database" class="w-5 h-5"></i>
+                        </div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <h3 class="text-base font-semibold text-neutral-900">自研病毒库</h3>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-neutral-900 text-white">
+                                <i data-lucide="loader" class="w-3 h-3"></i>
+                                开发中
+                            </span>
+                        </div>
+                        <p class="text-sm text-neutral-500 leading-relaxed">
+                            与自研引擎配套，我们也在持续构建量盾自研病毒库。它将融合原生 ClamAV 规则与社区贡献的本土化样本，覆盖更多国内常见威胁，并通过更高效的更新机制，缩短从威胁出现到规则下发的响应周期。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-6 scroll-reveal">
+                    <div class="card rounded-xl p-6 sm:p-8">
+                        <div class="flex items-start gap-3 mb-5">
+                            <div class="icon-box w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="users" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-neutral-900">为什么需要你</h3>
+                                <p class="text-sm text-neutral-500">非盈利项目的每一次进步，都离不开社区的参与</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i data-lucide="bug" class="w-4 h-4 text-neutral-900"></i>
+                                    <h4 class="text-sm font-semibold text-neutral-900">提交样本</h4>
+                                </div>
+                                <p class="text-xs text-neutral-500 leading-relaxed">遇到漏报或误报时，提交样本帮助我们完善病毒库。</p>
+                            </div>
+                            <div class="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i data-lucide="message-square" class="w-4 h-4 text-neutral-900"></i>
+                                    <h4 class="text-sm font-semibold text-neutral-900">反馈建议</h4>
+                                </div>
+                                <p class="text-xs text-neutral-500 leading-relaxed">使用中的任何问题与想法，都是产品迭代的方向。</p>
+                            </div>
+                            <div class="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i data-lucide="code-2" class="w-4 h-4 text-neutral-900"></i>
+                                    <h4 class="text-sm font-semibold text-neutral-900">参与贡献</h4>
+                                </div>
+                                <p class="text-xs text-neutral-500 leading-relaxed">无论是代码、规则还是文档，欢迎一起打磨量盾。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="divider"></div>
+        </div>
+
+        <!-- 加入 Telegram 群 -->
+        <section class="py-16 sm:py-20">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="max-w-3xl mx-auto scroll-reveal">
+                    <div class="card rounded-2xl py-10 sm:py-12 px-4 sm:px-6 text-center">
+                        <div class="inline-flex w-16 h-16 rounded-2xl items-center justify-center mb-5" style="background: #229ED9; color: #fff;">
+                            <i data-lucide="send" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-semibold text-neutral-900 mb-3">加入 Telegram 群</h3>
+                        <p class="text-sm text-neutral-500 max-w-lg mx-auto mb-8 leading-relaxed">
+                            想和量盾团队以及其他用户直接交流？欢迎加入我们的 Telegram 群组。在这里你可以获取最新进展、提交问题反馈、参与样本讨论，也可以为量盾的自研引擎与病毒库出一份力。
+                        </p>
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                            <a href="https://t.me/+O4vYnEN5FFQ0NWFl" rel="noopener" class="btn-telegram w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg text-sm font-semibold kbd-focus">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                <span>加入 Telegram 群</span>
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                            </a>
+                            <a href="https://github.com/wemebabo57-a11y/LDEFENDER.git" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-sm font-medium kbd-focus">
+                                <i data-lucide="github" class="w-4 h-4"></i>
+                                <span>前往 GitHub 仓库</span>
+                            </a>
+                        </div>
+                        <p class="text-xs text-neutral-400 mt-6 flex items-center justify-center gap-1.5">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            群组永久免费 · 欢迎所有关注安全的伙伴加入
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 CTA -->
+        <section class="pb-16 sm:pb-20 section-muted">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="card rounded-2xl py-10 sm:py-12 px-4 sm:px-6 text-center scroll-reveal">
+                    <div class="inline-flex icon-box w-14 h-14 rounded-2xl items-center justify-center mb-5">
+                        <i data-lucide="rocket" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-semibold text-neutral-900 mb-2">先体验量盾，再决定加入</h3>
+                    <p class="text-sm text-neutral-500 mb-8">免费下载，无需注册，即装即用</p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a href="/download.html" class="btn-primary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium kbd-focus" target="_self">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span>下载量盾安全中心</span>
+                        </a>
+                        <a href="/about.html" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium kbd-focus" target="_self">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                            <span>了解更多</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-neutral-200 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p class="text-center text-sm text-neutral-500">量盾安全软件 © 2026 版权所有</p>
+                <div class="flex items-center gap-4 text-sm text-neutral-500 flex-wrap justify-center">
+                    <a href="mailto:LDefender@kslinmeng.cn" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
+                        <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">联系支持</span>
+                    </a>
+                    <a href="/index.html" class="hover:text-neutral-900 transition-colors" target="_self">首页</a>
+                    <a href="/download.html" class="hover:text-neutral-900 transition-colors" target="_self">下载</a>
+                    <a href="/changelog.html" class="hover:text-neutral-900 transition-colors" target="_self">更新日志</a>
+                    <a href="/about.html" class="hover:text-neutral-900 transition-colors" target="_self">关于</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+        <i data-lucide="arrow-up" class="w-4 h-4"></i>
+    </button>
+
+    <script>
+        lucide.createIcons();
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+        // scroll-reveal 错峰
+        document.querySelectorAll('.grid, .space-y-5, .space-y-3').forEach(container => {
+            const reveals = container.querySelectorAll(':scope > .scroll-reveal');
+            reveals.forEach((el, idx) => {
+                el.style.transitionDelay = `${Math.min(idx * 40, 240)}ms`;
+            });
+        });
+
+        // 滚动进度条 & 返回顶部
+        const scrollProgress = document.getElementById('scrollProgress');
+        const backToTop = document.getElementById('backToTop');
+        function handleScroll() {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            scrollProgress.style.width = (scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0) + '%';
+            if (scrollTop > 400) backToTop.classList.add('visible');
+            else backToTop.classList.remove('visible');
+        }
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // 移动端菜单
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isHidden = mobileMenu.classList.contains('hidden');
+                mobileMenu.classList.toggle('hidden', !isHidden);
+                this.setAttribute('aria-expanded', String(isHidden));
+                this.querySelector('i[data-lucide]').setAttribute('data-lucide', isHidden ? 'x' : 'menu');
+                lucide.createIcons();
+            });
+            mobileMenu.querySelectorAll('a').forEach(a => {
+                a.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    mobileMenuToggle.querySelector('i[data-lucide]').setAttribute('data-lucide', 'menu');
+                    lucide.createIcons();
+                });
+            });
+        }
+    </script>
+</body>
+</html>
