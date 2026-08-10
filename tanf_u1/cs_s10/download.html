@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>下载中心 · 量盾安全软件</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        :root {
+            --z-base: 0;
+            --z-header: 50;
+            --z-overlay: 60;
+            --z-toast: 70;
+        }
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: #171717;
+            background: #fff;
+            overflow-x: hidden;
+        }
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+            background: linear-gradient(90deg, #171717 0%, #525252 100%);
+            z-index: var(--z-overlay); transition: width 0.1s ease-out;
+        }
+        ::selection { background: #171717; color: #fff; }
+        .hero-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+        .hero-bg::before {
+            content: ''; position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
+            width: 700px; height: 700px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(23,23,23,0.04) 0%, rgba(23,23,23,0.01) 40%, transparent 70%);
+            animation: heroPulse 8s ease-in-out infinite;
+        }
+        @keyframes heroPulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.7; transform: translateX(-50%) scale(1.05); }
+        }
+        .logo-glow { position: relative; }
+        .logo-glow::after {
+            content: ''; position: absolute; inset: -6px; border-radius: 20px;
+            background: linear-gradient(135deg, rgba(23,23,23,0.12), rgba(82,82,82,0.04));
+            filter: blur(14px); z-index: -1; animation: logoGlow 3s ease-in-out infinite;
+        }
+        @keyframes logoGlow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        .btn-primary {
+            background: #171717; color: #fff;
+            transition: background 0.25s ease, transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
+            position: relative; overflow: hidden;
+        }
+        .btn-primary::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, #404040 0%, #262626 100%);
+            opacity: 0; transition: opacity 0.25s ease;
+        }
+        .btn-primary:hover { box-shadow: 0 8px 28px rgba(23,23,23,0.22); transform: translateY(-1px); }
+        .btn-primary:hover::before { opacity: 1; }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary > * { position: relative; z-index: 1; }
+        .btn-secondary {
+            background: #fff; color: #171717; border: 1px solid #e5e5e5;
+            transition: border-color 0.25s ease, background 0.25s ease, transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
+        }
+        .btn-secondary:hover {
+            border-color: #171717; background: #fafafa;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05); transform: translateY(-1px);
+        }
+        .btn-secondary:active { transform: translateY(0); }
+        .link { color: #525252; transition: color 0.2s ease; position: relative; }
+        .link::after {
+            content: ''; position: absolute; left: 0; bottom: -4px; width: 0; height: 1px;
+            background: #171717; transition: width 0.25s ease;
+        }
+        .link:hover { color: #171717; }
+        .link:hover::after { width: 100%; }
+        .nav-active { color: #171717 !important; font-weight: 500; }
+        .nav-active::after { width: 100% !important; }
+        .card {
+            background: #fff; border: 1px solid #e5e5e5;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1);
+            position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(23,23,23,0.4), transparent);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .card:hover {
+            border-color: #d4d4d4;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.03);
+            transform: translateY(-2px);
+        }
+        .card:hover::before { opacity: 1; }
+        .detail-row { transition: background 0.2s ease, padding-left 0.2s ease; }
+        .detail-row:hover { background: #fafafa; padding-left: 1.25rem; }
+        .divider { height: 1px; background: linear-gradient(90deg, transparent 0%, #e5e5e5 50%, transparent 100%); }
+        .section-muted { background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%); }
+        .icon-box {
+            background: #fafafa; color: #171717; border: 1px solid #e5e5e5; transition: all 0.3s ease;
+        }
+        .card:hover .icon-box { border-color: #171717; box-shadow: 0 2px 8px rgba(23,23,23,0.08); }
+        .scroll-reveal {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+        }
+        .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+        .update-tag {
+            display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 4px;
+            font-size: 11px; font-weight: 600; letter-spacing: 0.04em; background: #171717; color: #fff;
+        }
+        .badge-new {
+            display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px;
+            font-size: 10px; font-weight: 600; letter-spacing: 0.04em; background: #171717; color: #fff;
+            animation: badgePulse 2.5s ease-in-out infinite;
+        }
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(23,23,23,0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(23,23,23,0); }
+        }
+        .kbd-focus:focus-visible { outline: 2px solid #171717; outline-offset: 2px; }
+        .section-title {
+            font-size: 13px; font-weight: 600; color: #737373;
+            letter-spacing: 0.05em; text-transform: uppercase;
+        }
+        .back-to-top {
+            position: fixed; right: 1.5rem; bottom: 1.5rem; width: 44px; height: 44px;
+            border-radius: 50%; background: #171717; color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+            box-shadow: 0 6px 20px rgba(23,23,23,0.2);
+            z-index: var(--z-overlay); cursor: pointer; border: none;
+        }
+        .back-to-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .back-to-top:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(23,23,23,0.3); }
+        .dropdown-menu {
+            background: #fff; border: 1px solid #e5e5e5;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            animation: dropdownIn 0.2s cubic-bezier(0.16,1,0.3,1); transform-origin: top center;
+        }
+        @keyframes dropdownIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .dropdown-toggle { transition: background 0.2s ease; }
+        .dropdown-toggle:hover { background: rgba(255,255,255,0.15); }
+        .toast {
+            position: fixed; left: 50%; bottom: 5rem; transform: translateX(-50%) translateY(20px);
+            background: #171717; color: #fff; padding: 0.75rem 1.25rem; border-radius: 8px;
+            font-size: 14px; box-shadow: 0 10px 30px rgba(23,23,23,0.25);
+            opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+            z-index: var(--z-toast); display: flex; align-items: center; gap: 0.5rem; max-width: 90vw;
+        }
+        .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+    <base target="_blank">
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <header class="fixed top-0 left-0 right-0 z-[var(--z-header)] bg-white/90 backdrop-blur-md border-b border-neutral-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+            <a href="/index.html" class="flex items-center gap-2.5 kbd-focus rounded" target="_self">
+                <img src="https://pan.kslinmeng.cn/view.php/a969af51b121abb0b57963fbed808ce5.png" alt="量盾安全软件" width="28" height="28" class="w-7 h-7 rounded-md flex-shrink-0 object-contain">
+                <span class="text-sm font-semibold text-neutral-900">量盾安全软件</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="/index.html" class="link text-sm" target="_self">首页</a>
+                <a href="/download.html" class="link text-sm nav-active" target="_self">下载</a>
+                <a href="/changelog.html" class="link text-sm" target="_self">更新日志</a>
+                <a href="/about.html" class="link text-sm" target="_self">关于</a>
+                <a href="/join.html" class="link text-sm" target="_self">加入我们</a>
+                <a href="https://liangdun.top/tools.html" rel="noopener" class="link text-sm">工具站</a>
+            </nav>
+            <button type="button" id="mobileMenuToggle" class="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-md text-neutral-700 hover:bg-neutral-100 kbd-focus" aria-label="打开菜单" aria-expanded="false">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </header>
+    <div id="mobileMenu" class="md:hidden hidden bg-white border-b border-neutral-200 fixed top-14 left-0 right-0 z-[var(--z-header)] shadow-md">
+        <nav class="flex flex-col py-2">
+            <a href="/index.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">首页</a>
+            <a href="/download.html" class="px-6 py-3 text-sm text-neutral-900 font-medium bg-neutral-50 border-b border-neutral-100" target="_self">下载</a>
+            <a href="/changelog.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">更新日志</a>
+            <a href="/about.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">关于</a>
+            <a href="/join.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">加入我们</a>
+            <a href="https://liangdun.top/tools.html" rel="noopener" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50">工具站</a>
+        </nav>
+    </div>
+
+    <main class="pt-14">
+        <!-- Hero -->
+        <section class="relative">
+            <div class="hero-bg"></div>
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-14 pb-8 sm:pt-20 sm:pb-10 relative z-10">
+                <div class="text-center scroll-reveal">
+                    <p class="section-title mb-3">下载中心</p>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-neutral-900 tracking-tight mb-4">
+                        选择适合你的版本
+                    </h1>
+                    <p class="text-base sm:text-lg text-neutral-500 max-w-lg mx-auto leading-relaxed">
+                        所有版本免费下载，无需注册，即装即用
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主推下载卡片 -->
+        <section class="relative">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 pb-12 sm:pb-16">
+                <div class="card rounded-2xl p-6 sm:p-8 scroll-reveal">
+                    <div class="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-8">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-3 mb-3 flex-wrap">
+                                <div class="icon-box w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="update-tag">最新版</span>
+                                    <span class="badge-new">NEW</span>
+                                </div>
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-900 tracking-tight mb-2">
+                                量盾安全中心 6.2
+                            </h2>
+                            <p class="text-sm text-neutral-500 mb-4 flex items-center gap-2 flex-wrap">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                                    版本 6.2
+                                </span>
+                                <span class="text-neutral-300">·</span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                    发布于 2026-07
+                                </span>
+                                <span class="text-neutral-300">·</span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i data-lucide="monitor" class="w-3.5 h-3.5"></i>
+                                    Windows 64 位
+                                </span>
+                            </p>
+                            <p class="text-neutral-600 leading-relaxed text-sm sm:text-base">
+                                全面升级的主动防御引擎，结合云查杀与本地启发式扫描，提供轻量、高效的实时保护。新增行为回滚与勒索软件防护模块，让系统安全更上一层楼。
+                            </p>
+                        </div>
+                        <div class="lg:w-72 flex-shrink-0">
+                            <div class="space-y-3">
+                                <a href="https://pub-6061660c3e5d4769a9f88dc079c12ed8.r2.dev/ld6.2.exe" rel="noopener" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-medium kbd-focus">
+                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                    <span>主链接下载</span>
+                                </a>
+                                <a href="https://links.8uid.com/d/8d41cc399e1acb6c8c43dea3aae83c63" rel="noopener" class="btn-secondary w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-medium kbd-focus">
+                                    <i data-lucide="server" class="w-4 h-4"></i>
+                                    <span>备用下载</span>
+                                </a>
+                                <a href="https://1850287558.share.123pan.cn/123pan/UBD1vd-tZo1h" rel="noopener" class="btn-secondary w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-medium kbd-focus">
+                                    <i data-lucide="cloud" class="w-4 h-4"></i>
+                                    <span>网盘下载</span>
+                                </a>
+                            </div>
+                            <p class="text-xs text-neutral-400 mt-3 text-center flex items-center justify-center gap-1">
+                                <i data-lucide="info" class="w-3 h-3"></i>
+                                三个源均为同一文件，任选其一
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 其他版本下载 -->
+        <section class="section-muted py-12 sm:py-16">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="mb-8 scroll-reveal">
+                    <p class="section-title mb-2">更多版本</p>
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-900 tracking-tight">
+                        其他产品与历史版本
+                    </h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- 量盾安全中心 6.1 Pro -->
+                    <div class="card rounded-xl p-6 scroll-reveal">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box w-11 h-11 rounded-lg flex items-center justify-center">
+                                <i data-lucide="shield" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-xs text-neutral-400 inline-flex items-center gap-1">
+                                <i data-lucide="history" class="w-3 h-3"></i>
+                                旧版
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-neutral-900 mb-1.5">量盾安全中心 6.1 Pro</h3>
+                        <p class="text-sm text-neutral-500 leading-relaxed mb-5">
+                            经典稳定版本，适合对兼容性有更高要求的老系统环境，功能完整可长期使用。
+                        </p>
+                        <a href="https://links.8uid.com/d/01b79766b1c301b6b6bfb880dd8b828e" rel="noopener" class="btn-secondary w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium kbd-focus">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span>下载 6.1 Pro</span>
+                        </a>
+                    </div>
+
+                    <!-- 量盾安全浏览器 -->
+                    <div class="card rounded-xl p-6 scroll-reveal">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box w-11 h-11 rounded-lg flex items-center justify-center">
+                                <i data-lucide="globe" class="w-5 h-5"></i>
+                            </div>
+                            <span class="badge-new">NEW</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-neutral-900 mb-1.5">量盾安全浏览器</h3>
+                        <p class="text-sm text-neutral-500 leading-relaxed mb-5">
+                            内置广告拦截与恶意网址拦截，基于 Chromium 内核打造，兼顾速度与隐私安全。
+                        </p>
+                        <a href="https://pub-6061660c3e5d4769a9f88dc079c12ed8.r2.dev/setup.exe" rel="noopener" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium kbd-focus">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span>下载浏览器</span>
+                        </a>
+                    </div>
+
+                    <!-- 量盾HIPS 专杀工具 -->
+                    <div class="card rounded-xl p-6 scroll-reveal">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box w-11 h-11 rounded-lg flex items-center justify-center">
+                                <i data-lucide="stethoscope" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-xs text-neutral-400 inline-flex items-center gap-1">
+                                <i data-lucide="clock" class="w-3 h-3"></i>
+                                即将开放
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-neutral-900 mb-1.5">量盾HIPS 专杀工具</h3>
+                        <p class="text-sm text-neutral-500 leading-relaxed mb-5">
+                            针对顽固恶意软件的深度清理工具，结合 HIPS 行为分析与专杀规则，正在打磨中。
+                        </p>
+                        <button type="button" id="comingSoonBtn" class="btn-secondary w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium kbd-focus cursor-pointer">
+                            <i data-lucide="bell" class="w-4 h-4"></i>
+                            <span>敬请期待</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 系统要求 -->
+        <section class="py-12 sm:py-16">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="mb-8 scroll-reveal">
+                    <p class="section-title mb-2">运行环境</p>
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-900 tracking-tight">
+                        系统要求
+                    </h2>
+                    <p class="text-sm text-neutral-500 mt-2">安装前请确认你的设备满足以下最低配置</p>
+                </div>
+                <div class="card rounded-xl overflow-hidden scroll-reveal">
+                    <div class="divide-y divide-neutral-100">
+                        <div class="detail-row flex items-center justify-between px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="monitor-smartphone" class="w-4 h-4 text-neutral-400"></i>
+                                <span class="text-sm text-neutral-500">操作系统</span>
+                            </div>
+                            <span class="text-sm font-medium text-neutral-900 tabular-nums">Windows 7 / 8 / 10 / 11（64位）</span>
+                        </div>
+                        <div class="detail-row flex items-center justify-between px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="cpu" class="w-4 h-4 text-neutral-400"></i>
+                                <span class="text-sm text-neutral-500">处理器</span>
+                            </div>
+                            <span class="text-sm font-medium text-neutral-900 tabular-nums">1 GHz 或更快</span>
+                        </div>
+                        <div class="detail-row flex items-center justify-between px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="memory-stick" class="w-4 h-4 text-neutral-400"></i>
+                                <span class="text-sm text-neutral-500">内存</span>
+                            </div>
+                            <span class="text-sm font-medium text-neutral-900 tabular-nums">512 MB RAM（最低）</span>
+                        </div>
+                        <div class="detail-row flex items-center justify-between px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="hard-drive" class="w-4 h-4 text-neutral-400"></i>
+                                <span class="text-sm text-neutral-500">磁盘空间</span>
+                            </div>
+                            <span class="text-sm font-medium text-neutral-900 tabular-nums">200 MB 可用空间</span>
+                        </div>
+                        <div class="detail-row flex items-center justify-between px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="wifi" class="w-4 h-4 text-neutral-400"></i>
+                                <span class="text-sm text-neutral-500">网络</span>
+                            </div>
+                            <span class="text-sm font-medium text-neutral-900">病毒库更新需要联网</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 安装步骤 -->
+        <section class="section-muted py-12 sm:py-16">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="mb-8 scroll-reveal">
+                    <p class="section-title mb-2">快速上手</p>
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-900 tracking-tight">
+                        三步完成安装
+                    </h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="card rounded-xl p-6 scroll-reveal">
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="icon-box w-11 h-11 rounded-lg flex items-center justify-center">
+                                <i data-lucide="download" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-3xl font-semibold text-neutral-200 tabular-nums">01</span>
+                        </div>
+                        <h3 class="text-base font-semibold text-neutral-900 mb-2">下载安装包</h3>
+                        <p class="text-sm text-neutral-500 leading-relaxed">
+                            点击上方下载按钮，获取最新版本的安装包文件，保存到本地任意目录。
+                        </p>
+                    </div>
+                    <div class="card rounded-xl p-6 scroll-reveal">
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="icon-box w-11 h-11 rounded-lg flex items-center justify-center">
+                                <i data-lucide="play" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-3xl font-semibold text-neutral-200 tabular-nums">02</span>
+                        </div>
+                        <h3 class="text-base font-semibold text-neutral-900 mb-2">运行安装程序</h3>
+                        <p class="text-sm text-neutral-500 leading-relaxed">
+                            双击运行下载的安装包，按照安装向导提示完成安装，无需额外配置。
+                        </p>
+                    </div>
+                    <div class="card rounded-xl p-6 scroll-reveal">
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="icon-box w-11 h-11 rounded-lg flex items-center justify-center">
+                                <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-3xl font-semibold text-neutral-200 tabular-nums">03</span>
+                        </div>
+                        <h3 class="text-base font-semibold text-neutral-900 mb-2">更新病毒库</h3>
+                        <p class="text-sm text-neutral-500 leading-relaxed">
+                            首次启动后联网更新病毒库，完成后即可享受完整的实时保护能力。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 文件校验信息 -->
+        <section class="py-12 sm:py-16">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="mb-8 scroll-reveal">
+                    <p class="section-title mb-2">完整性校验</p>
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-900 tracking-tight">
+                        文件校验信息
+                    </h2>
+                    <p class="text-sm text-neutral-500 mt-2">用于验证下载文件是否完整、未被篡改</p>
+                </div>
+                <div class="card rounded-xl p-6 sm:p-8 scroll-reveal">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="fingerprint" class="w-5 h-5 text-neutral-700"></i>
+                            <h3 class="text-base font-semibold text-neutral-900">SHA-256 校验码</h3>
+                        </div>
+                        <span class="text-xs text-neutral-400 inline-flex items-center gap-1">
+                            <i data-lucide="badge-check" class="w-3 h-3"></i>
+                            量盾安全中心 6.2 正式版
+                        </span>
+                    </div>
+                    <div class="bg-neutral-50 border border-neutral-200 rounded-lg p-4 font-mono text-xs sm:text-sm text-neutral-700 break-all tabular-nums leading-relaxed">
+                        <span class="text-neutral-400 select-none">SHA256&nbsp;(&nbsp;ld6.2.exe&nbsp;)&nbsp;=</span><br>
+                        <span class="text-neutral-900">FC4346EB3F16E7708E0F90BE211EC029E91C381FC22E323637D3597617C5A6D4</span>
+                    </div>
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-neutral-500">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="file-box" class="w-3.5 h-3.5 text-neutral-400"></i>
+                            <span>文件名：ld6.2.exe</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="scale" class="w-3.5 h-3.5 text-neutral-400"></i>
+                            <span>文件大小：200 - 300 MB</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="calendar-clock" class="w-3.5 h-3.5 text-neutral-400"></i>
+                            <span>构建时间：2026-07-15</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="badge-check" class="w-3.5 h-3.5 text-neutral-400"></i>
+                            <span>数字签名：tanf</span>
+                        </div>
+                    </div>
+                    <div class="mt-5 pt-5 border-t border-neutral-100 flex items-start gap-2 text-xs text-neutral-400 leading-relaxed">
+                        <i data-lucide="info" class="w-3.5 h-3.5 flex-shrink-0 mt-0.5"></i>
+                        <p>可使用 <span class="font-mono text-neutral-600">certutil -hashfile 文件名 SHA256</span> 命令在 Windows 中计算并比对校验值，确保文件完整无误。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 CTA -->
+        <section class="section-muted py-12 sm:py-16">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="card rounded-2xl p-8 sm:p-12 text-center scroll-reveal">
+                    <div class="inline-flex icon-box w-14 h-14 rounded-2xl items-center justify-center mb-5">
+                        <i data-lucide="life-buoy" class="w-7 h-7"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-900 tracking-tight mb-3">
+                        遇到问题？
+                    </h2>
+                    <p class="text-sm sm:text-base text-neutral-500 max-w-md mx-auto leading-relaxed mb-7">
+                        安装或使用过程中遇到任何问题，欢迎通过邮件联系我们的支持团队，我们会尽快回复。
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a href="mailto:LDefender@kslinmeng.cn" class="btn-primary inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium kbd-focus">
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                            <span>联系支持</span>
+                        </a>
+                        <a href="/index.html" class="btn-secondary inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium kbd-focus" target="_self">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                            <span>返回首页</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-neutral-200 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p class="text-center text-sm text-neutral-500">量盾安全软件 © 2026 版权所有</p>
+                <div class="flex items-center gap-4 text-sm text-neutral-500 flex-wrap justify-center">
+                    <a href="mailto:LDefender@kslinmeng.cn" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
+                        <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">联系支持</span>
+                    </a>
+                    <a href="/index.html" class="hover:text-neutral-900 transition-colors" target="_self">首页</a>
+                    <a href="/changelog.html" class="hover:text-neutral-900 transition-colors" target="_self">更新日志</a>
+                    <a href="/about.html" class="hover:text-neutral-900 transition-colors" target="_self">关于</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+        <i data-lucide="arrow-up" class="w-4 h-4"></i>
+    </button>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+        <i data-lucide="bell" class="w-4 h-4 flex-shrink-0"></i>
+        <span id="toastText">量盾HIPS 专杀工具即将开放，敬请期待</span>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+        // scroll-reveal 错峰
+        document.querySelectorAll('.grid, .space-y-5, .space-y-3').forEach(container => {
+            const reveals = container.querySelectorAll(':scope > .scroll-reveal');
+            reveals.forEach((el, idx) => {
+                el.style.transitionDelay = `${Math.min(idx * 40, 240)}ms`;
+            });
+        });
+
+        // 滚动进度条 & 返回顶部
+        const scrollProgress = document.getElementById('scrollProgress');
+        const backToTop = document.getElementById('backToTop');
+        function handleScroll() {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            scrollProgress.style.width = (scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0) + '%';
+            if (scrollTop > 400) backToTop.classList.add('visible');
+            else backToTop.classList.remove('visible');
+        }
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // 移动端菜单
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isHidden = mobileMenu.classList.contains('hidden');
+                mobileMenu.classList.toggle('hidden', !isHidden);
+                this.setAttribute('aria-expanded', String(isHidden));
+                this.querySelector('i[data-lucide]').setAttribute('data-lucide', isHidden ? 'x' : 'menu');
+                lucide.createIcons();
+            });
+            mobileMenu.querySelectorAll('a').forEach(a => {
+                a.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    mobileMenuToggle.querySelector('i[data-lucide]').setAttribute('data-lucide', 'menu');
+                    lucide.createIcons();
+                });
+            });
+        }
+
+        // Toast 提示（即将开放）
+        const toast = document.getElementById('toast');
+        const toastText = document.getElementById('toastText');
+        const comingSoonBtn = document.getElementById('comingSoonBtn');
+        let toastTimer = null;
+        function showToast(message) {
+            if (!toast) return;
+            if (toastText && message) toastText.textContent = message;
+            toast.classList.add('visible');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('visible'), 2600);
+        }
+        if (comingSoonBtn && toast) {
+            comingSoonBtn.addEventListener('click', () => {
+                showToast('量盾HIPS 专杀工具即将开放，敬请期待');
+            });
+        }
+    </script>
+</body>
+</html>
