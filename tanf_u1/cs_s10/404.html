@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>404 · 页面未找到 · 量盾安全软件</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a5f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        ::selection { background: #3b82f6; color: #fff; }
+
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.7s ease-out forwards;
+        }
+        .fade-in-delay-1 { animation-delay: 0.1s; }
+        .fade-in-delay-2 { animation-delay: 0.2s; }
+        .fade-in-delay-3 { animation-delay: 0.3s; }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: #fff;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-secondary {
+            background: #fff;
+            color: #1e3a5f;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+            border-color: #3b82f6;
+            color: #2563eb;
+            box-shadow: 0 2px 12px rgba(59,130,246,0.1);
+            transform: translateY(-1px);
+        }
+        .btn-secondary:active { transform: translateY(0); }
+
+        .feature-card {
+            transition: all 0.25s ease;
+        }
+        .feature-card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+            transform: translateY(-2px);
+        }
+
+        .detail-row {
+            transition: background 0.15s ease;
+        }
+        .detail-row:hover {
+            background: #f8fafc;
+        }
+
+        /* 触摸优化 */
+        .btn-primary, .btn-secondary, a, button {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body class="bg-white font-sans text-slate-800">
+
+    <!-- 固定导航 —— 与官网完全一致 -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="./" class="flex items-center gap-2 sm:gap-3 group">
+                <img src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾安全软件" class="w-8 h-8 rounded-lg flex-shrink-0 object-contain">
+                <span class="text-base font-semibold text-slate-900 tracking-tight">量盾安全软件</span>
+            </a>
+            <nav class="hidden sm:flex items-center gap-6 md:gap-8">
+                <a href="./#features" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">产品介绍</a>
+                <a href="./#details" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">功能详情</a>
+                <a href="./#support" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">支持</a>
+                <a href="./#download" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">下载</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="pt-16 relative">
+        <!-- 背景光晕（柔和） -->
+        <div class="hero-glow"></div>
+
+        <!-- 404 核心内容区域 -->
+        <section class="relative z-10 py-16 sm:py-24">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6">
+                
+                <!-- 404 大卡片 —— 模仿官网卡片质感 -->
+                <div class="fade-in text-center">
+                    <div class="feature-card bg-white rounded-3xl border border-slate-200/80 p-8 sm:p-12 shadow-sm">
+                        <!-- 404 大号显示 -->
+                        <div class="mb-4 flex justify-center">
+                            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-brand-50 flex items-center justify-center">
+                                <i data-lucide="file-question" class="w-10 h-10 sm:w-12 sm:h-12 text-brand-500"></i>
+                            </div>
+                        </div>
+                        <h1 class="text-6xl sm:text-7xl lg:text-8xl font-bold text-slate-900 tracking-tight mb-3">404</h1>
+                        <p class="text-lg sm:text-xl text-slate-500 font-light mb-2">页面未找到</p>
+                        <p class="text-sm text-slate-400 max-w-md mx-auto mb-8">
+                            您访问的地址可能已失效、输入错误，或者页面暂时不可用。
+                        </p>
+                        
+                        <!-- 操作按钮组 -->
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+                            <a href="./" class="btn-primary w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-medium">
+                                <i data-lucide="home" class="w-4 h-4"></i>
+                                返回首页
+                            </a>
+                            <a href="#contact-support" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-medium">
+                                <i data-lucide="mail" class="w-4 h-4"></i>
+                                联系支持
+                            </a>
+                            <a href="./#download" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-medium">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                下载中心
+                            </a>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-6">
+                            或通过下方邮箱直接联系我们
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 联系支持卡片 (完全复用官网风格，并确保邮箱可见) -->
+                <div id="contact-support" class="mt-10 fade-in fade-in-delay-1 scroll-mt-20">
+                    <div class="max-w-2xl mx-auto">
+                        <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+                            <div class="flex items-start gap-4 mb-5">
+                                <div class="w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="headset" class="w-5 h-5 text-brand-500"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-semibold text-slate-900 mb-1">联系我们 · 支持邮箱</h3>
+                                    <p class="text-sm text-slate-400">遇到问题或想反馈？直接发送邮件，我们尽快回复</p>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <!-- 主邮箱 -->
+                                <div class="flex items-center gap-3 p-3 bg-slate-50/60 rounded-xl border border-slate-100">
+                                    <i data-lucide="at-sign" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                                    <span class="text-sm text-slate-600 hidden sm:inline">主邮箱：</span>
+                                    <a href="mailto:QQ201324qq0596@outlook.com" class="text-sm text-brand-600 font-medium hover:underline break-all">
+                                        QQ201324qq0596@outlook.com
+                                    </a>
+                                    <span class="text-xs text-slate-400 ml-auto hidden sm:block">(推荐)</span>
+                                </div>
+                                <!-- 备用邮箱 -->
+                                <div class="flex items-center gap-3 p-3 bg-slate-50/60 rounded-xl border border-slate-100">
+                                    <i data-lucide="mail-plus" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                                    <span class="text-sm text-slate-600 hidden sm:inline">备用邮箱：</span>
+                                    <a href="mailto:wemebabo57@gmail.com" class="text-sm text-brand-600 font-medium hover:underline break-all">
+                                        wemebabo57@gmail.com
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="mt-5 flex items-start gap-3 text-xs text-slate-400 border-t pt-4">
+                                <i data-lucide="info" class="w-3.5 h-3.5 mt-0.5 flex-shrink-0"></i>
+                                <span>如果遇到404错误频繁出现，请告知我们具体链接，我们会及时修复。</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 补充快速链接 (增强官方站感) -->
+                <div class="mt-8 text-center fade-in fade-in-delay-2">
+                    <div class="inline-flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm">
+                        <a href="./#features" class="text-slate-500 hover:text-brand-600 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>产品介绍
+                        </a>
+                        <a href="./#details" class="text-slate-500 hover:text-brand-600 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="list-checks" class="w-3.5 h-3.5"></i>功能详情
+                        </a>
+                        <a href="https://github.com/wemebabo57-a11y/LIANDUN" class="text-slate-500 hover:text-brand-600 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="github" class="w-3.5 h-3.5"></i>GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 简洁分割线 -->
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="border-t border-slate-100"></div>
+        </div>
+
+        <!-- 再次强调下载 (与官网底部引导类似，但更轻量) -->
+        <section class="py-12 sm:py-16">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="bg-slate-50/80 rounded-2xl border border-slate-100 py-8 sm:py-10 px-4 sm:px-6 text-center fade-in fade-in-delay-3">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-2">找不到想要的页面？试试量盾安全工具</h3>
+                    <p class="text-sm text-slate-400 mb-6">轻量 · 本地 · 无广告</p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a href="https://pf1.cn-nb1.rains3.com/liangdun-5.2plus%20setup.exe" class="btn-primary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-medium">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            量盾安全中心
+                        </a>
+                        <a href="https://pf1.cn-nb1.rains3.com/ldkillsetup.exe" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-medium">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            量盾专杀工具
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部版权 (与官网一致，并包含联系入口) -->
+    <footer class="border-t border-slate-100">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p class="text-center text-sm text-slate-400">量盾安全软件 © 2026 版权所有</p>
+                <div class="flex items-center gap-5 text-sm text-slate-400">
+                    <a href="mailto:QQ201324qq0596@outlook.com" class="hover:text-brand-600 transition-colors flex items-center gap-1.5">
+                        <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">联系支持</span>
+                    </a>
+                    <a href="#contact-support" class="hover:text-brand-600 transition-colors">支持</a>
+                    <a href="./" class="hover:text-brand-600 transition-colors">首页</a>
+                </div>
+            </div>
+            <!-- 移动端额外邮箱展示（确保可见） -->
+            <div class="sm:hidden mt-4 text-center">
+                <div class="text-xs text-slate-400 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+                    <span>📧 QQ201324qq0596@outlook.com</span>
+                    <span class="w-1 h-1 rounded-full bg-slate-300 hidden xs:block"></span>
+                    <span>📧 wemebabo57@gmail.com</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+    <!-- 确保滚动时锚点不被固定头遮挡 -->
+    <style>
+        html {
+            scroll-padding-top: 80px;
+        }
+        /* 极小屏适配 */
+        @media (max-width: 480px) {
+            .xs\:block { display: block; }
+        }
+    </style>
+</body>
+</html>
