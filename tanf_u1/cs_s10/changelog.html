@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>更新日志 · 量盾安全软件</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['system-ui','-apple-system','BlinkMacSystemFont','Segoe UI','PingFang SC','Microsoft YaHei','sans-serif'] } } }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        :root {
+            --z-base: 0; --z-header: 50; --z-overlay: 60; --z-toast: 70;
+        }
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+            color: #171717; background: #fff; overflow-x: hidden;
+        }
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+            background: linear-gradient(90deg, #171717 0%, #525252 100%);
+            z-index: var(--z-overlay); transition: width 0.1s ease-out;
+        }
+        ::selection { background: #171717; color: #fff; }
+        .hero-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+        .hero-bg::before {
+            content: ''; position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
+            width: 700px; height: 700px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(23,23,23,0.04) 0%, rgba(23,23,23,0.01) 40%, transparent 70%);
+            animation: heroPulse 8s ease-in-out infinite;
+        }
+        @keyframes heroPulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.7; transform: translateX(-50%) scale(1.05); }
+        }
+        .btn-primary {
+            background: #171717; color: #fff;
+            transition: background 0.25s ease, transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
+            position: relative; overflow: hidden;
+        }
+        .btn-primary::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, #404040 0%, #262626 100%);
+            opacity: 0; transition: opacity 0.25s ease;
+        }
+        .btn-primary:hover { box-shadow: 0 8px 28px rgba(23,23,23,0.22); transform: translateY(-1px); }
+        .btn-primary:hover::before { opacity: 1; }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary > * { position: relative; z-index: 1; }
+        .btn-secondary {
+            background: #fff; color: #171717; border: 1px solid #e5e5e5;
+            transition: border-color 0.25s ease, background 0.25s ease, transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
+        }
+        .btn-secondary:hover {
+            border-color: #171717; background: #fafafa;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05); transform: translateY(-1px);
+        }
+        .btn-secondary:active { transform: translateY(0); }
+        .link { color: #525252; transition: color 0.2s ease; position: relative; }
+        .link::after {
+            content: ''; position: absolute; left: 0; bottom: -4px; width: 0; height: 1px;
+            background: #171717; transition: width 0.25s ease;
+        }
+        .link:hover { color: #171717; }
+        .link:hover::after { width: 100%; }
+        .nav-active { color: #171717 !important; font-weight: 500; }
+        .nav-active::after { width: 100% !important; }
+        .card {
+            background: #fff; border: 1px solid #e5e5e5;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1);
+            position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(23,23,23,0.4), transparent);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .card:hover {
+            border-color: #d4d4d4;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.03);
+            transform: translateY(-2px);
+        }
+        .card:hover::before { opacity: 1; }
+        .divider { height: 1px; background: linear-gradient(90deg, transparent 0%, #e5e5e5 50%, transparent 100%); }
+        .section-muted { background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%); }
+        .icon-box { background: #fafafa; color: #171717; border: 1px solid #e5e5e5; transition: all 0.3s ease; }
+        .card:hover .icon-box { border-color: #171717; box-shadow: 0 2px 8px rgba(23,23,23,0.08); }
+        .scroll-reveal {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+        }
+        .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+        .update-tag {
+            display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 4px;
+            font-size: 11px; font-weight: 600; letter-spacing: 0.04em; background: #171717; color: #fff;
+        }
+        .version-badge {
+            display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 6px;
+            font-size: 13px; font-weight: 600; background: #171717; color: #fff;
+        }
+        .badge-new {
+            display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px;
+            font-size: 10px; font-weight: 600; letter-spacing: 0.04em; background: #171717; color: #fff;
+            animation: badgePulse 2.5s ease-in-out infinite;
+        }
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(23,23,23,0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(23,23,23,0); }
+        }
+        .kbd-focus:focus-visible { outline: 2px solid #171717; outline-offset: 2px; }
+        .section-title {
+            font-size: 13px; font-weight: 600; color: #737373;
+            letter-spacing: 0.05em; text-transform: uppercase;
+        }
+        .back-to-top {
+            position: fixed; right: 1.5rem; bottom: 1.5rem; width: 44px; height: 44px;
+            border-radius: 50%; background: #171717; color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+            box-shadow: 0 6px 20px rgba(23,23,23,0.2);
+            z-index: var(--z-overlay); cursor: pointer; border: none;
+        }
+        .back-to-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .back-to-top:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(23,23,23,0.3); }
+        /* 时间线 */
+        .timeline-line {
+            position: absolute; left: 19px; top: 0; bottom: 0; width: 2px;
+            background: linear-gradient(180deg, #171717 0%, #e5e5e5 100%);
+        }
+        .timeline-dot {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #171717; color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; z-index: 1; position: relative;
+            box-shadow: 0 0 0 4px #fff;
+        }
+        .change-item {
+            border-left: 2px solid #e5e5e5;
+            transition: border-color 0.2s ease;
+        }
+        .change-item:hover { border-left-color: #171717; }
+        .tag-new { background: #171717; color: #fff; }
+        .tag-improve { background: #f5f5f5; color: #525252; }
+        .tag-fix { background: #fafafa; color: #737373; border: 1px solid #e5e5e5; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+    <base target="_blank">
+</head>
+<body class="bg-white text-neutral-900">
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <header class="fixed top-0 left-0 right-0 z-[var(--z-header)] bg-white/90 backdrop-blur-md border-b border-neutral-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+            <a href="/index.html" class="flex items-center gap-2.5 kbd-focus rounded" target="_self">
+                <img src="https://pan.kslinmeng.cn/view.php/a969af51b121abb0b57963fbed808ce5.png" alt="量盾安全软件" width="28" height="28" class="w-7 h-7 rounded-md flex-shrink-0 object-contain">
+                <span class="text-sm font-semibold text-neutral-900">量盾安全软件</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="/index.html" class="link text-sm" target="_self">首页</a>
+                <a href="/download.html" class="link text-sm" target="_self">下载</a>
+                <a href="/changelog.html" class="link text-sm nav-active" target="_self">更新日志</a>
+                <a href="/about.html" class="link text-sm" target="_self">关于</a>
+                <a href="/join.html" class="link text-sm" target="_self">加入我们</a>
+                <a href="https://liangdun.top/tools.html" rel="noopener" class="link text-sm">工具站</a>
+            </nav>
+            <button type="button" id="mobileMenuToggle" class="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-md text-neutral-700 hover:bg-neutral-100 kbd-focus" aria-label="打开菜单" aria-expanded="false">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </header>
+    <div id="mobileMenu" class="md:hidden hidden bg-white border-b border-neutral-200 fixed top-14 left-0 right-0 z-[var(--z-header)] shadow-md">
+        <nav class="flex flex-col py-2">
+            <a href="/index.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">首页</a>
+            <a href="/download.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">下载</a>
+            <a href="/changelog.html" class="px-6 py-3 text-sm text-neutral-900 font-medium bg-neutral-50 border-b border-neutral-100" target="_self">更新日志</a>
+            <a href="/about.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">关于</a>
+            <a href="/join.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">加入我们</a>
+            <a href="https://liangdun.top/tools.html" rel="noopener" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50">工具站</a>
+        </nav>
+    </div>
+
+    <main class="pt-14">
+        <!-- Hero -->
+        <section class="relative">
+            <div class="hero-bg"></div>
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-14 pb-8 sm:pt-20 sm:pb-10 relative z-10">
+                <div class="text-center scroll-reveal">
+                    <p class="section-title mb-3">更新日志</p>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-neutral-900 tracking-tight mb-4">
+                        每一次迭代，都为了更好
+                    </h1>
+                    <p class="text-base sm:text-lg text-neutral-500 max-w-lg mx-auto leading-relaxed">
+                        记录量盾安全中心的版本演进与功能改进
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 版本时间线 -->
+        <section class="py-8 sm:py-12">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="mb-8 sm:mb-10 scroll-reveal">
+                    <p class="section-title mb-2">版本历史</p>
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-900 tracking-tight">
+                        版本演进时间线
+                    </h2>
+                    <p class="text-sm text-neutral-500 mt-2">从首次发布到最新迭代，见证量盾的每一步成长</p>
+                </div>
+
+                <div class="relative">
+                    <div class="timeline-line"></div>
+
+                    <!-- 版本 6.2 -->
+                    <div class="relative flex gap-5 sm:gap-7 pb-10 scroll-reveal">
+                        <div class="timeline-dot">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        </div>
+                        <div class="card rounded-xl p-6 sm:p-7 flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-3 mb-5 flex-wrap">
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                        <span class="version-badge tabular-nums">v6.2</span>
+                                        <span class="update-tag">最新版</span>
+                                        <span class="badge-new">NEW</span>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 tracking-tight">量盾安全中心 6.2</h3>
+                                </div>
+                                <div class="text-sm text-neutral-400 tabular-nums inline-flex items-center gap-1.5 flex-shrink-0 mt-1">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                    <span>2026-07</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-new px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">新功能</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">HIPS 增强内核驱动，深入系统底层监控系统调用</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-improve px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">优化</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">行为监控升级，增强进程注入/注册表篡改/驱动加载拦截精度</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-improve px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">优化</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">内核驱动采用更高效事件处理机制，降低 CPU 占用</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-improve px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">优化</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">兼容性改进，支持更多 Windows 版本</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 版本 6.1 Pro -->
+                    <div class="relative flex gap-5 sm:gap-7 pb-10 scroll-reveal">
+                        <div class="timeline-dot">
+                            <i data-lucide="zap" class="w-5 h-5"></i>
+                        </div>
+                        <div class="card rounded-xl p-6 sm:p-7 flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-3 mb-5 flex-wrap">
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                        <span class="version-badge tabular-nums">v6.1 Pro</span>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 tracking-tight">量盾安全中心 6.1 Pro</h3>
+                                </div>
+                                <div class="text-sm text-neutral-400 tabular-nums inline-flex items-center gap-1.5 flex-shrink-0 mt-1">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                    <span>2026-04</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-new px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">新功能</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">更新内核驱动，底层驱动全面重构</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-improve px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">优化</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">重新设计 UI 界面，交互更简洁直观</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-improve px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">优化</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">降低磁盘占用，优化缓存与日志机制</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-new px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">新功能</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">增加多线程扫描，大幅提升扫描速度</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 版本 6.0 -->
+                    <div class="relative flex gap-5 sm:gap-7 pb-10 scroll-reveal">
+                        <div class="timeline-dot">
+                            <i data-lucide="rocket" class="w-5 h-5"></i>
+                        </div>
+                        <div class="card rounded-xl p-6 sm:p-7 flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-3 mb-5 flex-wrap">
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                        <span class="version-badge tabular-nums">v6.0</span>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 tracking-tight">量盾安全中心 6.0</h3>
+                                </div>
+                                <div class="text-sm text-neutral-400 tabular-nums inline-flex items-center gap-1.5 flex-shrink-0 mt-1">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                    <span>2026-01</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-new px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">新功能</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">全新架构重构，模块化设计</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-new px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">新功能</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">实时防护引擎上线</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-improve px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">优化</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">病毒库更新机制改进</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-improve px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">优化</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">安装包体积减小 40%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 版本 5.2 -->
+                    <div class="relative flex gap-5 sm:gap-7 pb-10 scroll-reveal">
+                        <div class="timeline-dot">
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        </div>
+                        <div class="card rounded-xl p-6 sm:p-7 flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-3 mb-5 flex-wrap">
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                        <span class="version-badge tabular-nums">v5.2</span>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 tracking-tight">量盾安全中心 5.2</h3>
+                                </div>
+                                <div class="text-sm text-neutral-400 tabular-nums inline-flex items-center gap-1.5 flex-shrink-0 mt-1">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                    <span>2025-10</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-improve px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">优化</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">扫描引擎性能提升</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-fix px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">修复</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">部分系统下安装失败的问题</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-fix px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">修复</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">病毒库更新偶发中断</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 版本 5.1 -->
+                    <div class="relative flex gap-5 sm:gap-7 pb-10 scroll-reveal">
+                        <div class="timeline-dot">
+                            <i data-lucide="package" class="w-5 h-5"></i>
+                        </div>
+                        <div class="card rounded-xl p-6 sm:p-7 flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-3 mb-5 flex-wrap">
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                        <span class="version-badge tabular-nums">v5.1</span>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 tracking-tight">量盾安全中心 5.1</h3>
+                                </div>
+                                <div class="text-sm text-neutral-400 tabular-nums inline-flex items-center gap-1.5 flex-shrink-0 mt-1">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                    <span>2025-07</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-new px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">新功能</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">自定义扫描模式</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-new px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">新功能</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">启动项管理</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-improve px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">优化</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">UI 暗色模式适配</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 版本 5.0 -->
+                    <div class="relative flex gap-5 sm:gap-7 pb-2 scroll-reveal">
+                        <div class="timeline-dot">
+                            <i data-lucide="flag" class="w-5 h-5"></i>
+                        </div>
+                        <div class="card rounded-xl p-6 sm:p-7 flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-3 mb-5 flex-wrap">
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                        <span class="version-badge tabular-nums">v5.0</span>
+                                        <span class="update-tag" style="background:#f5f5f5;color:#525252;">首发版本</span>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 tracking-tight">量盾安全中心 5.0</h3>
+                                </div>
+                                <div class="text-sm text-neutral-400 tabular-nums inline-flex items-center gap-1.5 flex-shrink-0 mt-1">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                    <span>2025-04</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-new px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">新功能</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">量盾安全中心首次发布</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-new px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">新功能</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">基于 ClamAV 引擎的快速/全盘扫描</span>
+                                </div>
+                                <div class="change-item pl-3.5 py-1.5 flex items-start gap-3">
+                                    <span class="tag-new px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide flex-shrink-0 mt-0.5">新功能</span>
+                                    <span class="text-sm text-neutral-700 leading-relaxed">自动清除与隔离区</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 CTA -->
+        <section class="section-muted py-12 sm:py-16">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="card rounded-2xl p-8 sm:p-12 text-center scroll-reveal">
+                    <div class="inline-flex icon-box w-14 h-14 rounded-2xl items-center justify-center mb-5">
+                        <i data-lucide="download" class="w-7 h-7"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-900 tracking-tight mb-3">
+                        想体验最新版本？
+                    </h2>
+                    <p class="text-sm sm:text-base text-neutral-500 max-w-md mx-auto leading-relaxed mb-7">
+                        立即下载量盾安全中心 6.2，享受全面升级的安全防护能力。如有建议或反馈，欢迎随时告诉我们。
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a href="/download.html" class="btn-primary inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium kbd-focus" target="_self">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span>前往下载</span>
+                        </a>
+                        <a href="mailto:LDefender@kslinmeng.cn" class="btn-secondary inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium kbd-focus">
+                            <i data-lucide="message-square" class="w-4 h-4"></i>
+                            <span>提交反馈</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-neutral-200 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p class="text-center text-sm text-neutral-500">量盾安全软件 © 2026 版权所有</p>
+                <div class="flex items-center gap-4 text-sm text-neutral-500 flex-wrap justify-center">
+                    <a href="mailto:LDefender@kslinmeng.cn" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
+                        <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">联系支持</span>
+                    </a>
+                    <a href="/index.html" class="hover:text-neutral-900 transition-colors" target="_self">首页</a>
+                    <a href="/download.html" class="hover:text-neutral-900 transition-colors" target="_self">下载</a>
+                    <a href="/about.html" class="hover:text-neutral-900 transition-colors" target="_self">关于</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+        <i data-lucide="arrow-up" class="w-4 h-4"></i>
+    </button>
+
+    <script>
+        lucide.createIcons();
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+        // scroll-reveal 错峰
+        document.querySelectorAll('.grid, .space-y-5, .space-y-3, .relative').forEach(container => {
+            const reveals = container.querySelectorAll(':scope > .scroll-reveal');
+            reveals.forEach((el, idx) => {
+                el.style.transitionDelay = `${Math.min(idx * 40, 240)}ms`;
+            });
+        });
+
+        // 滚动进度条 & 返回顶部
+        const scrollProgress = document.getElementById('scrollProgress');
+        const backToTop = document.getElementById('backToTop');
+        function handleScroll() {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            scrollProgress.style.width = (scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0) + '%';
+            if (scrollTop > 400) backToTop.classList.add('visible');
+            else backToTop.classList.remove('visible');
+        }
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // 移动端菜单
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isHidden = mobileMenu.classList.contains('hidden');
+                mobileMenu.classList.toggle('hidden', !isHidden);
+                this.setAttribute('aria-expanded', String(isHidden));
+                this.querySelector('i[data-lucide]').setAttribute('data-lucide', isHidden ? 'x' : 'menu');
+                lucide.createIcons();
+            });
+            mobileMenu.querySelectorAll('a').forEach(a => {
+                a.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    mobileMenuToggle.querySelector('i[data-lucide]').setAttribute('data-lucide', 'menu');
+                    lucide.createIcons();
+                });
+            });
+        }
+    </script>
+</body>
+</html>
