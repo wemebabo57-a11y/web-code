@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>中国象棋 · AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="toastContainer"></div>
+
+<button class="about-icon-btn" id="aboutBtn" title="关于" aria-label="关于">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="9"/>
+    <line x1="12" y1="11" x2="12" y2="16.4"/>
+    <circle cx="12" cy="7.7" r="1.1" fill="currentColor" stroke="none"/>
+  </svg>
+</button>
+
+<div class="wrap">
+  <h1>中国象棋 · AI</h1>
+  <canvas id="board"></canvas>
+  <div class="controls">
+    <button id="restart">重新开始</button>
+    <button id="undo">悔棋</button>
+    <select id="sideSel">
+      <option value="red">我执红 · 先走</option>
+      <option value="black">我执黑 · 后走</option>
+    </select>
+  </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span>关 于</span>
+    <button class="sidebar-close" id="closeSidebar" aria-label="关闭">×</button>
+  </div>
+  <div class="sidebar-body">
+    <p><strong>Powered By duoduo61</strong></p>
+    <p><a href="https://github.com/duoduo61/html5-aichess" target="_blank" rel="noopener">项目开源链接</a></p>
+    <div class="about-version">v1.0.0（2026.10.3）</div>
+    <p> · “中国象棋 · AI”第一版正式发布</p>
+  </div>
+</aside>
+
+<script src="engine.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
+//Powered By duoduo61
+//Oct 3, 2026
+//不知道写点什么，放只小猫在这吧~
+<!--
+　　　　　 ＿＿
+　　　　　／＞　　フ
+　　　　　| 　_　 _ l
+　 　　　／` ミ＿xノ
+　　 　 /　　　 　 |
+　　　 /　 ヽ　　 ﾉ
+　 　 │　　|　|　|
+　／￣|　　 |　|　|
+　| (￣ヽ＿_ヽ_)__)
+　＼二つ ​​​
+-->
